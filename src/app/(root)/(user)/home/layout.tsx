@@ -11,7 +11,7 @@ export default function RootLayout({
   return (
     <div className="bg-gradient-to-b from-[#4D7CBF] to-[#AFBDD0] min-h-screen text-white relative">
       <Nav/>
-      <main className="pt-20">{children}</main>
+      <main>{children}</main>
     </div>
   );
 }

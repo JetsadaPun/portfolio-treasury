@@ -1,17 +1,12 @@
 import React from 'react'
-import FolderIcon from "@mui/icons-material/Folder";
-import { IconButton } from "@mui/material";
+import { FaFolder } from "react-icons/fa";
 const Nav = () => {
   return (
     <>
     <nav className="bg-transparent absolute top-0 left-0 w-full z-10">
         <div className="max-w-screen flex flex-wrap items-center justify-between mx-auto py-4 px-8">
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-            <IconButton
-              size="large" 
-            >
-              <FolderIcon sx={{ fontSize: 30, color: "#FDE69E" }} />
-            </IconButton>
+          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white flex items-center">
+          <FaFolder style={{ fontSize: 28, color: "#FDE69E", marginRight: "4px" }} />
             TREASURY PROJECT
           </span>
           <button

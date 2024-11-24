@@ -1,12 +1,25 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-
+import { Open_Sans, Roboto_Mono } from 'next/font/google'
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
+const openSans = Open_Sans({
+  subsets: ['latin'],
+  display: 'swap',
+  //👇 Add variable to our object
+  variable: '--font-opensans',
+})
+
+//👇 Configure the object for our second font
+const robotoMono = Roboto_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-roboto-mono',
+})
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
@@ -26,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${openSans.variable} ${robotoMono.variable} font-sans`}
       >
         {children}
       </body>
