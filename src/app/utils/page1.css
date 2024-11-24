@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg-gradient-custom {
+        @apply bg-gradient-to-r from-cyan-500 to-blue-500 h-screen;
+}
