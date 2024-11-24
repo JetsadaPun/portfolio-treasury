@@ -2,7 +2,7 @@ import React from 'react'
 
 const Page1 = () => {
   return (
-    <div className='mx-24 my-16 min-h-screen'>
+    <div className='mx-24 min-h-full my-12'>
       <div className='flex items-center text-[#FFF9EF] text-8xl font-bold'>
         <span>Share your project</span>
         <img src="/img2.png" className="w-24 h-24 ml-6 relative -translate-y-6" alt="dec2" 
