@@ -3,6 +3,13 @@ import React, { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { IconButton } from "@mui/material";
 import Showsubject from "../components/showsubject";
+import { Kanit } from 'next/font/google';
+
+const kanit = Kanit({
+  subsets: ['thai','latin'],
+  weight: '300',
+});
+
 const Page2 = () => {
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
   const buttonData = [
@@ -42,7 +49,7 @@ const Page2 = () => {
     });
   };
   return (
-    <div className="min-h-screen">
+    <div className={`${kanit.className} min-h-screen`}>
       <div className="mx-24 my-16">
         <div>
           <form className="max-w-m w-full">
@@ -62,7 +69,7 @@ const Page2 = () => {
               />
               <button
                 type="submit"
-                className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                className="text-white absolute end-2.5 bottom-2.5 bg-[#7AA1BE] hover:bg-[#4a75ac] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 Search
               </button>
