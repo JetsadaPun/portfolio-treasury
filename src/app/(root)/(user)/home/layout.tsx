@@ -9,7 +9,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="bg-gradient-to-b from-[#4D7CBF] to-[#AFBDD0] min-h-screen text-white relative">
+    <div className="bg-gradient-to-b from-[#4D7CBF] to-[#AFBDD0] min-h-screen max-h-screen text-white relative">
       <Nav/>
       <main>{children}</main>
     </div>

@@ -1,25 +1,29 @@
-import React from 'react'
+import React from "react";
 import { FaFolder } from "react-icons/fa";
-import { Arimo } from 'next/font/google';
-import { Kanit } from 'next/font/google';
+import { Arimo } from "next/font/google";
+import { Kanit } from "next/font/google";
 
 const arimo = Arimo({
-  subsets: ['latin'], 
-  weight: '500', 
+  subsets: ["latin"],
+  weight: "500",
 });
 
 const kanit = Kanit({
-  subsets: ['thai'],
-  weight: '300',
+  subsets: ["thai"],
+  weight: "300",
 });
 
 const Nav = () => {
   return (
     <>
-    <nav className="bg-transparent absolute top-0 left-0 w-full z-10">
+      <nav className="bg-transparent absolute top-0 left-0 w-full z-10">
         <div className="max-w-screen flex flex-wrap items-center justify-between mx-auto py-4 px-8">
-          <span className= {`${arimo.className} self-center text-2xl whitespace-nowrap dark:text-white flex items-center`}>
-          <FaFolder style={{ fontSize: 28, color: "#FDE69E", marginRight: "4px" }} />
+          <span
+            className={`${arimo.className} self-center text-2xl whitespace-nowrap dark:text-white flex items-center`}
+          >
+            <FaFolder
+              style={{ fontSize: 28, color: "#FDE69E", marginRight: "4px" }}
+            />
             TREASURY PROJECT
           </span>
           <button
@@ -46,7 +50,9 @@ const Nav = () => {
               />
             </svg>
           </button>
-          <div className={`${kanit.className} hidden w-full md:block md:w-auto" id="navbar-default`}>
+          <div
+            className={`${kanit.className} hidden w-fit md:block md:w-auto" id="navbar-default`}
+          >
             <ul className="flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-transparent dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700">
               <li>
                 <a
@@ -75,11 +81,10 @@ const Nav = () => {
               </li>
             </ul>
           </div>
-          
         </div>
       </nav>
-      </>
-  )
-}
+    </>
+  );
+};
 
-export default Nav
+export default Nav;
