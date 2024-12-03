@@ -77,7 +77,7 @@ const Page2 = () => {
           </form>
           <div className="mx-8 my-4">
             <div className="bg-[#4A4D4D] text-[#FFF9EF] p-4 text-center rounded-2xl">
-              เลือกหมวดหมู่และวิชาที่สนใจค้นหาและเพิ่มข้อมูล
+              เลือกหมวดหมู่ วิชาที่สนใจค้นหา และเพิ่มข้อมูล
             </div>
           </div>
           <div className="">
