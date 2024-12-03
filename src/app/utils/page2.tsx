@@ -3,11 +3,11 @@ import React, { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { IconButton } from "@mui/material";
 import Showsubject from "../components/showsubject";
-import { Kanit } from 'next/font/google';
+import { Kanit } from "next/font/google";
 
 const kanit = Kanit({
-  subsets: ['thai','latin'],
-  weight: '300',
+  subsets: ["thai", "latin"],
+  weight: "300",
 });
 
 const Page2 = () => {
