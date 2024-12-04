@@ -56,9 +56,9 @@ const Reviewsubject: React.FC<ReviewProps> = ({
       </div>
       <div className="flex items-center mt-4 text-gray-500 gap-x-8 justify-between">
         <div className="flex gap-4">
-        <div><ChatBubbleIcon/>ความคิดเห็น: {comment}</div>
-        <div><ThumbUpIcon/>ความชอบ: {likeCount}</div>
-        <div><GroupsIcon/>จำนวนผู้เข้าชม: {views}</div>
+        <div><ChatBubbleIcon/> ความคิดเห็น: {comment}</div>
+        <div><ThumbUpIcon/> ความชอบ: {likeCount}</div>
+        <div><GroupsIcon/> จำนวนผู้เข้าชม: {views}</div>
         </div>
         <div>
         <div><ShareIcon/></div>

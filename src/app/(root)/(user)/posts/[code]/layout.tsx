@@ -10,7 +10,7 @@ export default function RootLayout({
   return (
     <div className="bg-gradient-to-b from-[#4D7CBF] to-[#AFBDD0] min-h-screen text-white relative">
       <div><Nav/></div>
-      <main className="p-16">{children}</main>
+      <main className="py-16">{children}</main>
     </div>
   );
 }
