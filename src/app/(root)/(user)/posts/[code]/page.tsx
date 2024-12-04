@@ -4,7 +4,10 @@ import { Kanit } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import Reviewsubject from "@/app/components/reviewsubject";
-import DescriptionIcon from '@mui/icons-material/Description';
+import DescriptionIcon from "@mui/icons-material/Description";
+import GroupsIcon from "@mui/icons-material/Groups";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+
 const kanit = Kanit({
   subsets: ["thai", "latin"],
   weight: "300",
@@ -15,7 +18,7 @@ const Page = () => {
   const router = useRouter();
   const { code } = params;
   const handleGoHome = () => {
-    router.push("/home"); 
+    router.push("/home");
   };
   const subjects = [
     {
@@ -54,7 +57,7 @@ const Page = () => {
   return (
     <div className={`${kanit.className} min-h-screen`}>
       <div className="bg-[#FFFFFF] rounded-2xl mx-24">
-        <div className="relative p-4 w-full">
+        <div className="relative pt-4 px-4 w-full">
           {subjects.map((subject, index) => (
             <div key={index} className="mb-4">
               <h2 className="text-base text-black">
@@ -64,21 +67,33 @@ const Page = () => {
                 <h2 className="text-base text-[#FFFFFF]">{subject.code} -</h2>
                 <h2 className="text-base text-gray-700">{subject.subtitle}</h2>
               </div>
-              <p className="text-sm text-gray-500 mt-2">
-                <DescriptionIcon />จำนวนผลงาน - {subject.workCount}
-              </p>
+              <div className="flex justify-between mx-4">
+                <div className="flex gap-4 ">
+                  <p className="text-sm text-gray-500 mt-2">
+                    <DescriptionIcon /> จำนวนผลงาน - {subject.workCount}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    <GroupsIcon /> จำนวนผู้เข้าชม - {subject.workCount}
+                  </p>
+                </div>
+                <div className="text-sm text-gray-500 mt-2 ">
+                  <ThumbUpIcon /> ความชอบ: 1
+                </div>
+              </div>
             </div>
           ))}
         </div>
-
-        <div className="mx-12 flex flex-col gap-y-4">
+        <div className="mx-12 flex flex-col gap-y-4 m-2">
           {reviewsubject.map((review, index) => (
             <Reviewsubject key={index} {...review} />
           ))}
         </div>
 
         <div className="flex justify-between">
-          <button onClick={handleGoHome} className="text-black bg-[#AAD7BF] py-2 px-4 rounded-[15px] m-12">
+          <button
+            onClick={handleGoHome}
+            className="text-black bg-[#AAD7BF] py-2 px-4 rounded-[15px] m-12"
+          >
             ย้อนกลับ
           </button>
           <button className="text-black bg-[#FDE69E] py-2 px-4 rounded-[15px] m-12">
