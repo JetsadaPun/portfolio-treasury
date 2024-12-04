@@ -3,11 +3,11 @@ import React, { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { IconButton } from "@mui/material";
 import Showsubject from "../components/showsubject";
-import { Kanit } from 'next/font/google';
+import { Kanit } from "next/font/google";
 
 const kanit = Kanit({
-  subsets: ['thai','latin'],
-  weight: '300',
+  subsets: ["thai", "latin"],
+  weight: "300",
 });
 
 const Page2 = () => {
@@ -109,9 +109,9 @@ const Page2 = () => {
             </div>
           </div>
           <div className="flex flex-col gap-4 mt-4">
-            {subjects.map((card) => (
+            {subjects.map((card, index) => (
               <Showsubject
-                key={card.code}
+                key={index} 
                 code={card.code}
                 title={card.title}
                 subtitle={card.subtitle}
