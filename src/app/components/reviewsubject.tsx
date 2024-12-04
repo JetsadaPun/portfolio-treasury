@@ -1,5 +1,8 @@
 import React from "react";
-
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import GroupsIcon from '@mui/icons-material/Groups';
+import ShareIcon from '@mui/icons-material/Share';
 interface ReviewProps {
   username: string;
   date: string;
@@ -25,7 +28,7 @@ const Reviewsubject: React.FC<ReviewProps> = ({
   views,
 }) => {
   return (
-    <div className="relative rounded-2xl w-full border-[1px] border-black p-4">
+    <div className="relative rounded-2xl w-full border-[1px] border-black p-4 ">
       <div className="flex items-center mb-2">
         <p className="text-base font-medium text-black mr-2">{username}</p>
         <p className="text-base text-gray-500">{date}</p>
@@ -51,10 +54,15 @@ const Reviewsubject: React.FC<ReviewProps> = ({
           />
         </div>
       </div>
-      <div className="flex items-center mt-4 text-gray-500 gap-x-8">
-        <div>ความคิดเห็น: {comment}</div>
-        <div>ความชอบ: {likeCount}</div>
-        <div>จำนวนผู้เข้าชม: {views}</div>
+      <div className="flex items-center mt-4 text-gray-500 gap-x-8 justify-between">
+        <div className="flex gap-4">
+        <div><ChatBubbleIcon/>ความคิดเห็น: {comment}</div>
+        <div><ThumbUpIcon/>ความชอบ: {likeCount}</div>
+        <div><GroupsIcon/>จำนวนผู้เข้าชม: {views}</div>
+        </div>
+        <div>
+        <div><ShareIcon/></div>
+        </div>
       </div>
     </div>
   );

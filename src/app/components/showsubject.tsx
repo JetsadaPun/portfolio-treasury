@@ -1,3 +1,5 @@
+"use client";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 interface CardProps {
@@ -7,16 +9,17 @@ interface CardProps {
   workCount: number;
 }
 
-interface ShowsubjectProps {
-  cards: CardProps[];
-}
-
 const Showsubject: React.FC<CardProps> = ({
   code,
   title,
   subtitle,
   workCount,
 }) => {
+  const router = useRouter();
+
+  const handleViewSubject = () => {
+    router.push(`/posts/${code}`);
+  };
   return (
     <div className="relative bg-[#FFFFFF] rounded-2xl p-4 w-full">
       <h2 className="text-base text-black">
@@ -27,7 +30,10 @@ const Showsubject: React.FC<CardProps> = ({
         <h2 className="text-base text-black"> {subtitle}</h2>
       </div>
       <p className="text-sm text-gray-500 mt-2">จำนวนผลงาน - {workCount}</p>
-      <button className="absolute right-4 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700 flex items-center">
+      <button
+        onClick={handleViewSubject} 
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700 flex items-center"
+      >
         เข้าชมผลงาน
         <span className="ml-2">{">"}</span>
       </button>

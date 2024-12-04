@@ -109,9 +109,9 @@ const Page2 = () => {
             </div>
           </div>
           <div className="flex flex-col gap-4 mt-4">
-            {subjects.map((card) => (
+            {subjects.map((card, index) => (
               <Showsubject
-                key={card.code}
+                key={index} 
                 code={card.code}
                 title={card.title}
                 subtitle={card.subtitle}
