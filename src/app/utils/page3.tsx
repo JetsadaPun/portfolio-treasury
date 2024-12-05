@@ -32,6 +32,7 @@ const Page3 = () => {
       comment: 1,
       likeCount: 1,
       views: 12.7,
+      
     },
     {
       username: "นายซีชอบกินปิ้งไก่",
@@ -58,7 +59,7 @@ const Page3 = () => {
       <div className="bg-[#FFFFFF] rounded-2xl mx-24 my-16">
         <div className="relative p-4 w-full">
           {subjects.map((subject, index) => (
-            <div key={index} className="mb-4">
+            <div key={index} className="mb-2">
               <h2 className="text-base text-black">
                 {subject.code} - {subject.title}
               </h2>
@@ -79,7 +80,20 @@ const Page3 = () => {
 
         <div className="mx-12 flex flex-col gap-y-4">
           {reviewsubject.map((review, index) => (
-            <Reviewsubject key={index} {...review} />
+            <Reviewsubject
+              key={index}
+              username={review.username}
+              date={review.date}
+              projectName={review.projectName}
+              detail={review.detail}
+              image={review.image}
+              comment={review.comment}
+              likeCount={review.likeCount}
+              views={review.views}
+              showDocuments={false}
+              showGithub={false}
+              showMemberTags={false}
+            />
           ))}
         </div>
 
