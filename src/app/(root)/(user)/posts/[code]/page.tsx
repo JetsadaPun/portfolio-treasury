@@ -17,9 +17,11 @@ const Page = () => {
   const params = useParams();
   const router = useRouter();
   const { code } = params;
+
   const handleGoHome = () => {
     router.push("/home");
   };
+  
   const subjects = [
     {
       code: "01418496 - 65",
