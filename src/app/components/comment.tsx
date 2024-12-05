@@ -1,40 +1,28 @@
 import React, { useState } from "react";
 
-interface Comment {
+interface CommentProps {
   username: string;
   text: string;
   date: string;
-  replies?: Comment[];
+  replies?: CommentProps[];
 }
 
-interface Document {
-  name: string;
-  link: string;
+interface CommentpostProps {
+  cards: CommentProps[];
 }
 
-interface ProjectDetailProps {
-  documents: Document[];
-  github: string;
-  membertag: string[];
-  comments?: Comment[];
-}
-
-const ProjectDetail: React.FC<ProjectDetailProps> = ({
-  documents,
-  github,
-  membertag,
-  comments = [],
-}) => {
+const Comment: React.FC<CommentpostProps> = ({ cards }) => {
   const [newComment, setNewComment] = useState<string>("");
-  const [commentsData, setCommentsData] = useState<Comment[]>(comments);
+  const [commentsData, setCommentsData] = useState<CommentProps[]>(cards);
 
   // ฟังก์ชันจัดการการส่งความคิดเห็น
   const handleCommentSubmit = () => {
     if (newComment.trim()) {
-      const newCommentData = {
-        username: "ผู้ใช้ตัวอย่าง",
+      const newCommentData: CommentProps = {
+        username: "เกรียนคีย์บอร์ด ใจกากปากเก่ง",
         text: newComment,
         date: new Date().toLocaleDateString(),
+        replies: [],
       };
       setCommentsData([...commentsData, newCommentData]);
       setNewComment(""); // ล้างช่องกรอกความคิดเห็นหลังส่ง
@@ -48,7 +36,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
   const handleReplySubmit = (index: number) => {
     if (replyInput[index]?.trim()) {
       const updatedComments = [...commentsData];
-      const replyData = {
+      const replyData: CommentProps = {
         username: "ผู้ใช้ตัวอย่าง",
         text: replyInput[index],
         date: new Date().toLocaleDateString(),
@@ -88,50 +76,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
   };
 
   return (
-    <div className="relative w-full p-6">
-      {/* เอกสารเกี่ยวกับโปรเจกต์ */}
-      <div className="mt-4 flex gap-2">
-        <p className="text-base font-medium text-black">เอกสารเกี่ยวกับโปรเจกต์:</p>
-        <div className="flex flex-col gap-2">
-          {documents.map((doc, index) => (
-            <a
-              key={index}
-              href={doc.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500"
-            >
-              {doc.name}
-            </a>
-          ))}
-        </div>
-      </div>
-
-      {/* GitHub */}
-      <div className="mt-4 flex gap-2">
-        <p className="text-base font-medium text-black">GitHub:</p>
-        <a href={github} target="_blank" rel="noopener noreferrer" className="text-blue-500">
-          {github}
-        </a>
-      </div>
-
-      {/* สมาชิกโปรเจกต์ */}
-      <div className="mt-4">
-        <p className="text-base font-medium text-black">สมาชิกโปรเจกต์:</p>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {membertag.map((member, index) => (
-            <span
-              key={index}
-              className="bg-gray-200 text-gray-600 text-sm py-1 px-3 rounded-full"
-            >
-              #{member}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* ความคิดเห็น */}
-      <div className="mt-6">
+      <div className="relative">
         <p className="text-base font-medium text-black">ความคิดเห็น:</p>
         <div className="mt-4 flex items-center gap-2">
           {/* รูปโปรไฟล์ตรงหน้าช่องเพิ่มความคิดเห็น */}
@@ -145,7 +90,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
             className="w-full border rounded-2xl px-4 py-2 text-sm text-black"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            onKeyDown={handleCommentKeyDown} // เพิ่มการฟังการกด Enter
+            onKeyDown={handleCommentKeyDown} 
           />
         </div>
 
@@ -192,8 +137,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
                   placeholder="ตอบกลับความคิดเห็น..."
                   className="w-full border rounded-2xl px-4 py-2 text-sm text-black"
                   value={replyInput[index] || ""}
-                  onChange={(e) => handleReplyChange(e, index)} // อัปเดตการพิมพ์ในช่องนี้
-                  onKeyDown={(e) => handleReplyKeyDown(e, index)} // เพิ่มการฟังการกด Enter
+                  onChange={(e) => handleReplyChange(e, index)} // อัปเดตการพิมพ์
+                  onKeyDown={(e) => handleReplyKeyDown(e, index)} 
                 />
               </div>
             </div>
@@ -202,8 +147,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
           <p className="text-sm text-gray-500 mt-4">ยังไม่มีความคิดเห็น</p>
         )}
       </div>
-    </div>
   );
 };
 
-export default ProjectDetail;
+export default Comment;
