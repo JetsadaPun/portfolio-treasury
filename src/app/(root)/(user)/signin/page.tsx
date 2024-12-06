@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const page = () => {
@@ -12,7 +13,7 @@ const page = () => {
           <p className="">ที่ผู้ใช้เพื่อทำการสร้างรหัสผ่านใหม่</p>
         </div>
         <form className="max-w-md mx-auto">
-          {/* อีเมลผู้ใช้ */}
+          
           <div className="mb-3 text-left">
             <label
               htmlFor="email"
@@ -76,11 +77,11 @@ const page = () => {
               required
             />
           </div>
-          {/* <div className="flex justify-end pb-8">
+          <div className="flex justify-end pb-8">
             <div className="text-sm font-medium text-[#807777]">
-              กลับหน้าล็อคอินเข้าสู่ระบบ
+            <Link href="/login">กลับหน้าล็อคอินเข้าสู่ระบบ</Link>
             </div>
-          </div> */}
+          </div>
           <button
             type="submit"
             className="text-[#807777] shadow-md bg-[#FDE69E] font-medium rounded-full text-sm w-full sm:w-auto px-12 py-2.5 text-center"
