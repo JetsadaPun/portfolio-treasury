@@ -37,7 +37,7 @@ const Comment: React.FC<CommentpostProps> = ({ cards }) => {
     if (replyInput[index]?.trim()) {
       const updatedComments = [...commentsData];
       const replyData: CommentProps = {
-        username: "ผู้ใช้ตัวอย่าง",
+        username: "แปลงร่างเป็นหมาป่าเดียวดาย",
         text: replyInput[index],
         date: new Date().toLocaleDateString(),
       };

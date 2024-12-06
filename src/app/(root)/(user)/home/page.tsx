@@ -12,7 +12,7 @@ const page = () => {
       <Page2/>
       <Page3/>
       <Page4/>
-      {/* <CreateReview/> */}
+      <CreateReview/>
     </div>
   )
 }

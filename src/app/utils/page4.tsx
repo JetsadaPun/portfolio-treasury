@@ -1,4 +1,4 @@
-"use client";  // เพิ่มบรรทัดนี้เพื่อให้ไฟล์ทำงานใน client-side
+"use client";  
 
 import React from "react";
 import { Kanit } from "next/font/google";
@@ -75,22 +75,17 @@ const Page4 = () => {
     router.push("/create-review");
   };
 
-  const buttonStyles = "py-2 px-4 rounded-[15px] m-12 text-black";
-
   return (
     <div className={`${kanit.className} min-h-screen`}>
-      <div className="bg-[#FFFFFF] rounded-2xl mx-24 my-16">
+      <div className="bg-[#FFFFFF] rounded-2xl mx-24 my-16 p-8">
         {/* หัวข้อ */}
-        <div className="relative p-4 w-full">
+        <div className="relative">
           {subjects.map((subject, index) => (
             <div key={index}>
-              <h2 className="text-base text-black">
-                {subject.code} - {subject.title}
+              <h2 className="text-lg font-medium text-black">
+                {subject.code} {subject.title}
               </h2>
-              <div className="flex">
-                <h2 className="text-base text-[#FFFFFF]">{subject.code} - </h2>
-                <h2 className="text-base text-gray-700">{subject.subtitle}</h2>
-              </div>
+              <h3 className="text-sm text-gray-500">{subject.subtitle}</h3>
             </div>
           ))}
         </div>
@@ -211,16 +206,10 @@ const Page4 = () => {
         <div className="flex justify-between">
           <button
             onClick={handleBack}
-            className={`${buttonStyles} bg-[#AAD7BF]`}
-          >
-            ย้อนกลับ
-          </button>
+            className="text-black bg-[#AAD7BF] py-2 px-4 rounded-[15px] m-6">ย้อนกลับ</button>
           <button
             onClick={handleCreateReview}
-            className={`${buttonStyles} bg-[#FDE69E]`}
-          >
-            สร้างรีวิว
-          </button>
+            className="text-black bg-[#FDE69E] py-2 px-4 rounded-[15px] m-6">สร้างรีวิว</button>
         </div>
       </div>
     </div>

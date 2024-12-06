@@ -56,24 +56,14 @@ const Page3 = () => {
 
   return (
     <div className={`${kanit.className} min-h-screen`}>
-      <div className="bg-[#FFFFFF] rounded-2xl mx-24 my-16">
-        <div className="relative p-4 w-full">
+      <div className="bg-[#FFFFFF] rounded-2xl mx-24 my-16 p-8">
+        <div className="relative w-full mb-4">
           {subjects.map((subject, index) => (
-            <div key={index} className="mb-2">
-              <h2 className="text-base text-black">
-                {subject.code} - {subject.title}
+            <div key={index}>
+              <h2 className="text-lg font-medium text-black">
+                {subject.code} {subject.title}
               </h2>
-              <div className="flex">
-                <h2 className="text-base text-[#FFFFFF]">
-                  {subject.code} - 
-                </h2>
-                <h2 className="text-base text-gray-700">
-                  {subject.subtitle}
-                </h2>
-              </div>
-              <p className="text-sm text-gray-500 mt-2">
-                จำนวนผลงาน - {subject.workCount}
-              </p>
+              <h3 className="text-sm text-gray-500">{subject.subtitle}</h3>
             </div>
           ))}
         </div>
@@ -100,10 +90,10 @@ const Page3 = () => {
         <div className="flex justify-between"> 
           <button 
             onClick={handleBack} 
-            className="text-black bg-[#AAD7BF] py-2 px-4 rounded-[15px] m-12" > ย้อนกลับ </button> 
+            className="text-black bg-[#AAD7BF] py-2 px-4 rounded-[15px] m-6">ย้อนกลับ</button> 
           <button 
             onClick={handleCreateReview} 
-            className="text-black bg-[#FDE69E] py-2 px-4 rounded-[15px] m-12" > สร้างรีวิว </button> 
+            className="text-black bg-[#FDE69E] py-2 px-4 rounded-[15px] m-6">สร้างรีวิว</button> 
         </div>
       </div>
     </div>
