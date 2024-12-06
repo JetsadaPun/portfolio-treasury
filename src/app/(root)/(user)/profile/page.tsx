@@ -39,7 +39,7 @@ const page = () => {
         </div>
         <div className="flex items-start gap-4 w-full">
           <div className="text-gray-700">
-            <AssignmentIcon /> โปรเจกค์
+            <AssignmentIcon /> โปรเจกต์
           </div>
           <div className="mx-2 w-[1px] h-6 bg-black"></div>
           <div className="text-gray-700 ">

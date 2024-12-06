@@ -32,7 +32,7 @@ const Showsubject: React.FC<CardProps> = ({
       <p className="text-sm text-gray-500 mt-2">จำนวนผลงาน - {workCount}</p>
       <button
         onClick={handleViewSubject} 
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700 flex items-center"
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-black hover:text-blue-700 flex items-center"
       >
         เข้าชมผลงาน
         <span className="ml-2">{">"}</span>

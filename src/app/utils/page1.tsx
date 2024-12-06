@@ -29,6 +29,7 @@ const Page1 = () => {
         <span className={`${arimo.className} mr-6`}>with other</span>
         <img src="/img1.png" className="w-20 h-20" alt="dec1" />
       </div>
+
       <div className={`${kanit.className} mt-16 text-[#FFF9EF] text-2xl`}>
         ร่วมแชร์ผลงานในรายวิชาร่วมกับเพื่อน ๆ
       </div>
