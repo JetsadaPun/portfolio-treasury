@@ -4,13 +4,11 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import GroupsIcon from "@mui/icons-material/Groups";
 import ShareIcon from "@mui/icons-material/Share";
 
-// Type สำหรับเอกสาร
 interface Document {
   name: string;
   link: string;
 }
 
-// Type สำหรับข้อมูลที่ใช้ใน Review
 interface ReviewProps {
   username: string;
   date: string;
@@ -20,9 +18,9 @@ interface ReviewProps {
   comment: number;
   likeCount: number;
   views: number;
-  documents?: Document[];  // เอกสารเกี่ยวกับโปรเจกต์
-  github?: string;         // ลิงก์ GitHub
-  membertag?: string[];    // รายชื่อสมาชิกโปรเจกต์
+  documents?: Document[];  
+  github?: string;         
+  membertag?: string[];   
   showDocuments?: boolean; // ควบคุมการแสดงเอกสาร
   showGithub?: boolean;    // ควบคุมการแสดง GitHub
   showMemberTags?: boolean; // ควบคุมการแสดงสมาชิกโปรเจกต์

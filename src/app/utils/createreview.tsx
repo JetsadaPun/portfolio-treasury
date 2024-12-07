@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useRef } from "react";
 import { Kanit } from "next/font/google";
 
@@ -188,7 +187,7 @@ const CreateReview = () => {
               name="projectDocument"
               onChange={handleFileChange}
               className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-md file:bg-gray-50 hover:file:bg-gray-100"
-              accept=".pdf" //จำกัดเฉพาะไฟล์ PDF
+              accept=".pdf" // กำหนดให้เลือกเฉพาะไฟล์ PDF
               required
             />
           </div>
