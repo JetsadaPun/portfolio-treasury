@@ -148,17 +148,16 @@ const EditProfile = () => {
 
           <div className="mt-4">
             <h2 className="text-lg font-medium text-black mx-20 mb-4">เกี่ยวกับฉัน</h2>
-            {/* ประวัติส่วนตัว */}
-            <div className="mb-4 mx-20">
-              <label className="block text-base font-medium text-black">ประวัติส่วนตัว:</label>
-              <textarea
-                name="bio"
-                placeholder="เพิ่มประวัติส่วนตัว..."
-                rows={4}
-                value={formData.bio}
+            {/* วันเกิด */}
+            <div className="mb-4 mx-20 flex items-center">
+              <label className="block text-base font-medium text-black w-20">วันเกิด:</label>
+              <input
+                type="date"
+                name="dob"
+                value={formData.dob}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 text-gray-700 focus:ring-2 focus:ring-blue-300 focus:outline-none resize-none"
-              ></textarea>
+              />
             </div>
             {/* ประวัติการศึกษา */}
             <div className="mb-4 mx-20 flex items-center">
@@ -172,16 +171,17 @@ const EditProfile = () => {
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 text-gray-700 focus:ring-2 focus:ring-blue-300 focus:outline-none resize-none"
               />
             </div>
-            {/* วันเกิด */}
-            <div className="mb-4 mx-20 flex items-center">
-              <label className="block text-base font-medium text-black w-20">วันเกิด:</label>
-              <input
-                type="date"
-                name="dob"
-                value={formData.dob}
+            {/* ประวัติส่วนตัว */}
+            <div className="mb-4 mx-20">
+              <label className="block text-base font-medium text-black">ประวัติส่วนตัว:</label>
+              <textarea
+                name="bio"
+                placeholder="เพิ่มประวัติส่วนตัว..."
+                rows={4}
+                value={formData.bio}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 text-gray-700 focus:ring-2 focus:ring-blue-300 focus:outline-none resize-none"
-              />
+              ></textarea>
             </div>
           </div>
 

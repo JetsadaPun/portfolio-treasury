@@ -5,6 +5,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import Aboutme from "@/app/components/aboutme";
 import Project from "@/app/components/project";
+import EditProfile from "@/app/components/editprofile";
 
 const kanit = Kanit({
   subsets: ["thai", "latin"],
@@ -64,6 +65,7 @@ const page = () => {
 
         <div className="flex mt-4 w-full">
           {selectedTab === "project" ? <Project /> : <Aboutme />}
+          {/* <EditProfile/> */}
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@ import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import GroupsIcon from "@mui/icons-material/Groups";
 import ShareIcon from "@mui/icons-material/Share";
+import { useRouter } from "next/navigation";
 
 interface Document {
   name: string;
@@ -24,6 +25,7 @@ interface ReviewProps {
   showDocuments?: boolean; // ควบคุมการแสดงเอกสาร
   showGithub?: boolean;    // ควบคุมการแสดง GitHub
   showMemberTags?: boolean; // ควบคุมการแสดงสมาชิกโปรเจกต์
+  postId: number;
 }
 
 const Reviewsubject: React.FC<ReviewProps> = ({
@@ -41,9 +43,12 @@ const Reviewsubject: React.FC<ReviewProps> = ({
   showDocuments = true,
   showGithub = true,
   showMemberTags = true,
+  postId,
 }) => {
+  const router = useRouter();
   return (
-    <div className="relative rounded-2xl w-full border-[1px] border-black p-4">
+    <div className="relative rounded-2xl w-full border-[1px] border-black p-4 cursor-pointer"
+    onClick={() => router.push(`/projects/${postId}`)}>
       {/* ข้อมูลผู้ใช้และวันที่ */}
       <div className="flex items-center mb-2">
         <p className="text-base font-medium text-black mr-2">{username}</p>

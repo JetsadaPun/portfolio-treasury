@@ -1,13 +1,15 @@
 "use client";
 import React, { useState, useRef } from "react";
 import { Kanit } from "next/font/google";
+import { useRouter } from "next/navigation";
 
 const kanit = Kanit({
   subsets: ["thai", "latin"],
   weight: "300",
 });
 
-const CreateReview = () => {
+const Page = () => {
+  const router = useRouter();
   const subjects = [
     {
       code: "01418496 - 65",
@@ -22,13 +24,15 @@ const CreateReview = () => {
     projectImage: null,
     projectLink: "",
     projectDocument: null,
-    members: ["You"], // สมาชิกเริ่มต้น
+    members: ["You"],
   });
 
   const projectImageRef = useRef<HTMLInputElement | null>(null);
   const projectDocumentRef = useRef<HTMLInputElement | null>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -42,6 +46,7 @@ const CreateReview = () => {
       const file = files[0];
 
       // ตรวจสอบว่าไฟล์เป็นรูปภาพ
+      //ไปแก้ ทำไมต้องขึ้นต้นด้วย image///////////////////////////////////////////////////////////////////////
       if (file.type.startsWith("image/")) {
         setFormData((prev) => ({
           ...prev,
@@ -108,6 +113,7 @@ const CreateReview = () => {
     if (projectDocumentRef.current) {
       projectDocumentRef.current.value = "";
     }
+    router.push("/home");
   };
 
   return (
@@ -117,7 +123,9 @@ const CreateReview = () => {
         <div className="relative mb-6">
           {subjects.map((subject, index) => (
             <div key={index}>
-              <h2 className="text-lg font-medium text-black">{subject.code} {subject.title}</h2>
+              <h2 className="text-lg font-medium text-black">
+                {subject.code} {subject.title}
+              </h2>
               <h3 className="text-sm text-gray-500">{subject.subtitle}</h3>
             </div>
           ))}
@@ -127,7 +135,9 @@ const CreateReview = () => {
         <form onSubmit={handleSubmit}>
           {/* ชื่อโปรเจกต์ */}
           <div className="mb-6">
-            <label className="block text-base font-medium text-black">ชื่อโปรเจกต์</label>
+            <label className="block text-base font-medium text-black">
+              ชื่อโปรเจกต์
+            </label>
             <input
               type="text"
               name="projectName"
@@ -140,7 +150,9 @@ const CreateReview = () => {
 
           {/* รายละเอียดเกี่ยวกับโปรเจกต์ */}
           <div className="mb-6">
-            <label className="block text-base font-medium text-black">รายละเอียดเกี่ยวกับโปรเจกต์</label>
+            <label className="block text-base font-medium text-black">
+              รายละเอียดเกี่ยวกับโปรเจกต์
+            </label>
             <textarea
               name="projectDetails"
               placeholder="เพิ่มรายละเอียดเกี่ยวกับโปรเจกต์..."
@@ -153,20 +165,24 @@ const CreateReview = () => {
 
           {/* เพิ่มรูปภาพโปรเจกต์ */}
           <div className="mb-6">
-            <label className="block text-base font-medium text-black">เพิ่มรูปภาพโปรเจกต์</label>
+            <label className="block text-base font-medium text-black">
+              เพิ่มรูปภาพโปรเจกต์
+            </label>
             <input
               ref={projectImageRef}
               type="file"
               name="projectImage"
               onChange={handleFileChange}
               className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-md file:bg-gray-50 hover:file:bg-gray-100"
-              accept="image/*"  // จำกัดไฟล์ที่เป็นรูปภาพเท่านั้น
+              accept="image/*" // จำกัดไฟล์ที่เป็นรูปภาพเท่านั้น
             />
           </div>
 
           {/* เพิ่มลิงก์ไปที่งาน */}
           <div className="mb-6">
-            <label className="block text-base font-medium text-black">เพิ่มลิงก์ไปที่งาน <span className="text-red-500">*</span></label>
+            <label className="block text-base font-medium text-black">
+              เพิ่มลิงก์ไปที่งาน <span className="text-red-500">*</span>
+            </label>
             <input
               type="url"
               name="projectLink"
@@ -180,7 +196,9 @@ const CreateReview = () => {
 
           {/* เอกสารเกี่ยวกับโปรเจกต์ */}
           <div className="mb-6">
-            <label className="block text-lg font-medium text-black">เอกสารเกี่ยวกับโปรเจกต์ <span className="text-red-500">*</span></label>
+            <label className="block text-lg font-medium text-black">
+              เอกสารเกี่ยวกับโปรเจกต์ <span className="text-red-500">*</span>
+            </label>
             <input
               ref={projectDocumentRef}
               type="file"
@@ -194,7 +212,9 @@ const CreateReview = () => {
 
           {/* เพิ่มสมาชิกโปรเจกต์ */}
           <div className="mb-6">
-            <label className="block text-base font-medium text-black">เพิ่มสมาชิกโปรเจกต์</label>
+            <label className="block text-base font-medium text-black">
+              เพิ่มสมาชิกโปรเจกต์
+            </label>
             <div className="mt-2 flex items-center space-x-4">
               {formData.members.map((member, index) => (
                 <div key={index} className="flex items-center space-x-2">
@@ -216,10 +236,16 @@ const CreateReview = () => {
           <div className="flex justify-between mt-8">
             <button
               onClick={handleCancel}
-              className="text-black bg-[#FDA49E] py-2 px-6 rounded-[15px] m-6">ยกเลิก</button>
+              className="text-black bg-[#FDA49E] py-2 px-6 rounded-[15px] m-6"
+            >
+              ยกเลิก
+            </button>
             <button
               type="submit"
-              className="text-black bg-[#AAD7BF] py-2 px-6 rounded-[15px] m-6">ยืนยัน</button>
+              className="text-black bg-[#AAD7BF] py-2 px-6 rounded-[15px] m-6"
+            >
+              ยืนยัน
+            </button>
           </div>
         </form>
       </div>
@@ -227,4 +253,4 @@ const CreateReview = () => {
   );
 };
 
-export default CreateReview;
+export default Page;

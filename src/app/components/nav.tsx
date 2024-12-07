@@ -3,7 +3,7 @@ import React from "react";
 import { FaFolder } from "react-icons/fa";
 import { Arimo } from "next/font/google";
 import { Kanit } from "next/font/google";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 const arimo = Arimo({
   subsets: ["latin"],
@@ -17,6 +17,7 @@ const kanit = Kanit({
 
 const Nav = () => {
   const router = useRouter();
+  const pathname = usePathname(); 
 
   const handlehomepage = () => {
     router.push(`/home`);
@@ -27,8 +28,9 @@ const Nav = () => {
       <nav className="bg-transparent absolute top-0 left-0 w-full z-10">
         <div className="max-w-screen flex flex-wrap items-center justify-between mx-auto py-4 px-8">
           <span
-            className={`${arimo.className} self-center text-2xl whitespace-nowrap dark:text-white flex items-center`}
-          onClick={handlehomepage}>
+            className={`${arimo.className} self-center text-2xl whitespace-nowrap dark:text-white flex items-center cursor-pointer`}
+            onClick={handlehomepage}
+          >
             <FaFolder
               style={{ fontSize: 28, color: "#FDE69E", marginRight: "4px" }}
             />
@@ -64,8 +66,10 @@ const Nav = () => {
             <ul className="flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-transparent dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700">
               <li>
                 <a
-                  href="#"
-                  className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-black"
+                  href="/searchprofile"
+                  className={`block py-2 px-3 md:p-0 ${
+                    pathname === "/searchprofile" ? "text-black" : "text-white"
+                  }`}
                   aria-current="page"
                 >
                   ค้นหาโปรไฟล์เพื่อน
@@ -73,8 +77,10 @@ const Nav = () => {
               </li>
               <li>
                 <a
-                  href="#"
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-black dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                  href="/searchproject"
+                  className={`block py-2 px-3 md:p-0 ${
+                    pathname === "/searchproject" ? "text-black" : "text-white"
+                  }`}
                 >
                   ค้นหาโปรเจกต์
                 </a>
@@ -82,9 +88,21 @@ const Nav = () => {
               <li>
                 <a
                   href="/profile"
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-black dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                  className={`block py-2 px-3 md:p-0 ${
+                    pathname === "/profile" ? "text-black" : "text-white"
+                  }`}
                 >
                   โปรไฟล์
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/login"
+                  className={`block py-2 px-3 md:p-0 ${
+                    pathname === "/login" ? "text-black" : "text-white"
+                  }`}
+                >
+                  ลงชื่อเข้าใช้
                 </a>
               </li>
             </ul>

@@ -1,4 +1,5 @@
 import React from "react";
+import EditProfile from "./editprofile";
 
 const Project = () => {
   return (

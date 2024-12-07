@@ -3,10 +3,11 @@ import React from "react";
 import { Kanit } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
-import Reviewsubject from "@/app/components/reviewsubject";
 import DescriptionIcon from "@mui/icons-material/Description";
 import GroupsIcon from "@mui/icons-material/Groups";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import Link from "next/link";
+import Reviewsubject from "@/app/components/reviewsubject";
 
 const kanit = Kanit({
   subsets: ["thai", "latin"],
@@ -21,6 +22,10 @@ const Page = () => {
   const handleGoHome = () => {
     router.push("/home");
   };
+
+  const handleCreate = () => {
+    router.push(`${code}/createpost`);
+  };
   
   const subjects = [
     {
@@ -33,6 +38,7 @@ const Page = () => {
 
   const reviewsubject = [
     {
+      
       username: "นายบีชอบกินไข่ปิ้ง",
       date: "30 พ.ย. 2567",
       projectName: "มะม่วงจิ้มรสดี",
@@ -42,6 +48,7 @@ const Page = () => {
       comment: 1,
       likeCount: 1,
       views: 12.7,
+      postId: 1,
     },
     {
       username: "นายซีชอบกินปิ้งไก่",
@@ -51,8 +58,9 @@ const Page = () => {
         "วิธีทอดไข่เจียวให้กรอบ 1. เทน้ำมันใส่กระทะ ตั้งน้ำมันให้ร้อน ตอกไข่ ปรุงรส แล้วตีให้เข้ากัน 2. พอน้ำมันเดือด นำกระชอนมากรองไข่ใส่กระทะให้ไข่ฟู พอไข่เริ่มมีสีเหลืองทองแล้วพลิกไข่อีกด้าน",
       image: "/img1.png",
       comment: 1,
-      likeCount: 1,
+      likeCount: 100,
       views: 1,
+      postId: 2,
     },
   ];
 
@@ -98,9 +106,9 @@ const Page = () => {
           >
             ย้อนกลับ
           </button>
-          <button className="text-black bg-[#FDE69E] py-2 px-4 rounded-[15px] m-12">
-            {" "}
-            สร้างรีวิว{" "}
+          <button className="text-black bg-[#FDE69E] py-2 px-4 rounded-[15px] m-12"
+          onClick={handleCreate}>
+            สร้างรีวิว
           </button>
         </div>
       </div>

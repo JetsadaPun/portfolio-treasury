@@ -6,15 +6,28 @@ import { useRouter } from "next/navigation";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import GroupsIcon from "@mui/icons-material/Groups";
 import ShareIcon from "@mui/icons-material/Share";
-import Comment from "../components/comment";
+import Comment from "../../../../components/comment"
 
 const kanit = Kanit({
   subsets: ["thai", "latin"],
   weight: "300",
 });
 
-const Page4 = () => {
+const Page = () => {
   const router = useRouter();
+
+  // ประกาศตัวแปรข้อความที่ใช้ในหน้าต่างๆ
+  const labels = {
+    backButton: "ย้อนกลับ",
+    createButton: "สร้างรีวิว",
+    projectName: "ชื่อโปรเจกต์",
+    projectDetail: "รายละเอียดเกี่ยวกับโปรเจกต์",
+    documents: "เอกสารเกี่ยวกับโปรเจกต์",
+    github: "GitHub",
+    projectMembers: "สมาชิกโปรเจกต์",
+    likes: "ความชอบ",
+    views: "จำนวนผู้เข้าชม",
+  };
 
   const subjects = [
     {
@@ -71,9 +84,7 @@ const Page4 = () => {
     router.back();
   };
 
-  const handleCreateReview = () => {
-    router.push("/create-review");
-  };
+  
 
   return (
     <div className={`${kanit.className} min-h-screen`}>
@@ -101,12 +112,12 @@ const Page4 = () => {
                 <p className="text-base text-gray-500">{review.date}</p>
               </div>
               <p className="text-base font-medium text-black inline">
-                ชื่อโปรเจกต์:{" "}
+                {labels.projectName}:{" "}
               </p>
               <span className="text-base text-black"> {review.projectName}</span>
 
               <p className="text-base font-medium text-black mt-2">
-                รายละเอียดเกี่ยวกับโปรเจกต์
+                {labels.projectDetail}
               </p>
               <span className="m-10 text-base text-black">{review.detail}</span>
 
@@ -129,7 +140,7 @@ const Page4 = () => {
               {review.showDocuments && review.documents.length > 0 && (
                 <div className="mt-4 flex gap-2">
                   <p className="text-base font-medium text-black">
-                    เอกสารเกี่ยวกับโปรเจกต์:
+                    {labels.documents}:
                   </p>
                   <div className="flex flex-col gap-2">
                     {review.documents.map((doc, index) => (
@@ -150,7 +161,7 @@ const Page4 = () => {
               {/* GitHub */}
               {review.showGithub && review.github && (
                 <div className="mt-4 flex gap-2">
-                  <p className="text-base font-medium text-black">GitHub:</p>
+                  <p className="text-base font-medium text-black">{labels.github}:</p>
                   <a
                     href={review.github}
                     target="_blank"
@@ -166,7 +177,7 @@ const Page4 = () => {
               {review.showMemberTags && review.membertag.length > 0 && (
                 <div className="mt-4">
                   <p className="text-base font-medium text-black">
-                    สมาชิกโปรเจกต์:
+                    {labels.projectMembers}:
                   </p>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {review.membertag.map((member, index) => (
@@ -184,10 +195,10 @@ const Page4 = () => {
               <div className="flex items-center mt-4 text-gray-500 gap-x-8 justify-between">
                 <div className="flex gap-4">
                   <div>
-                    <ThumbUpIcon /> ความชอบ: {review.likeCount}
+                    <ThumbUpIcon /> {labels.likes}: {review.likeCount}
                   </div>
                   <div>
-                    <GroupsIcon /> จำนวนผู้เข้าชม: {review.views}
+                    <GroupsIcon /> {labels.views}: {review.views}
                   </div>
                 </div>
                 <ShareIcon />
@@ -206,14 +217,18 @@ const Page4 = () => {
         <div className="flex justify-between">
           <button
             onClick={handleBack}
-            className="text-black bg-[#AAD7BF] py-2 px-4 rounded-[15px] m-6">ย้อนกลับ</button>
-          <button
-            onClick={handleCreateReview}
-            className="text-black bg-[#FDE69E] py-2 px-4 rounded-[15px] m-6">สร้างรีวิว</button>
+            className="text-black bg-[#AAD7BF] py-2 px-4 rounded-[15px] m-6">
+            {labels.backButton}
+          </button>
+          {/* <button
+            
+            className="text-black bg-[#FDE69E] py-2 px-4 rounded-[15px] m-6">
+            {labels.createButton}
+          </button> */}
         </div>
       </div>
     </div>
   );
 };
 
-export default Page4;
+export default Page;
