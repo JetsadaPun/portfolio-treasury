@@ -1,18 +1,18 @@
-"use client"
+"use client";
 import React, { useState } from "react";
-import Link from 'next/link'
+import Link from "next/link";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { Arimo } from 'next/font/google';
-import { Kanit } from 'next/font/google';
+import { Arimo } from "next/font/google";
+import { Kanit } from "next/font/google";
 
 const arimo = Arimo({
-  subsets: ['latin'], 
-  weight: '700', 
+  subsets: ["latin"],
+  weight: "700",
 });
 
 const kanit = Kanit({
-  subsets: ['thai'],
-  weight: '300',
+  subsets: ["thai"],
+  weight: "300",
 });
 
 const page = () => {
@@ -30,10 +30,9 @@ const page = () => {
     }));
   };
 
-
-  const handleSubmit = (e:any) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log("Form Data:", formData); 
+    console.log("Form Data:", formData);
   };
 
   const togglePasswordVisibility = () => {
@@ -79,7 +78,7 @@ const page = () => {
                 value={formData.email}
                 onChange={handleChange}
                 className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-none"
-                placeholder="อีเมล name.s@ku.th"
+                placeholder="ตัวอย่าง name.s@ku.th"
                 required
               />
             </div>
@@ -96,7 +95,7 @@ const page = () => {
                 value={formData.password}
                 onChange={handleChange}
                 className="bg-transparent border border-gray-300 text-[#807777] text-sm rounded-lg block w-full p-2.5 focus:outline-none"
-                placeholder="Abcd_1234"
+                placeholder="ตัวอย่าง Abcd_1234"
                 required
               />
               <div
@@ -110,11 +109,15 @@ const page = () => {
                 )}
               </div>
             </div>
-              <div className="flex justify-between mb-8">
-                  <div className="text-sm font-medium text-[#807777]"><Link href="/signin">สร้างบัญชี</Link></div>
-                  <div className="text-sm font-medium text-[#807777]"><Link href="/ForgotPassword">ลืมรหัสผ่าน</Link></div>
+            <div className="flex justify-between mb-8">
+              <div className="text-sm font-medium text-[#807777]">
+                <Link href="/signin">สร้างบัญชี</Link>
               </div>
-              <button
+              <div className="text-sm font-medium text-[#807777]">
+                <Link href="/ForgotPassword">ลืมรหัสผ่าน</Link>
+              </div>
+            </div>
+            <button
               type="submit"
               disabled={!isFormValid}
               className={`text-white font-medium rounded-full text-sm w-full sm:w-auto px-12 py-2.5 text-center ${
@@ -125,39 +128,39 @@ const page = () => {
             >
               เข้าสู่ระบบ
             </button>
+            <div className="text-left mt-5">
+              {!isValidEmail && formData.email.length > 0 && (
+                <p className="text-red-500 text-sm mt-2">
+                  ใช้อีเมล @ku.th เท่านั้น
+                </p>
+              )}
+              {!isPasswordLongEnough && formData.password.length > 0 && (
+                <p className="text-red-500 text-sm mt-2">
+                  รหัสผ่านต้องประกอบด้วย: ความยาวอย่างน้อย 8 ตัวอักษร
+                </p>
+              )}
+              {!containsUpperCase && formData.password.length > 0 && (
+                <p className="text-red-500 text-sm mt-2">
+                  ตัวอักษรพิมพ์ใหญ่อย่างน้อย 1 ตัว
+                </p>
+              )}
+              {!containsLowerCase && formData.password.length > 0 && (
+                <p className="text-red-500 text-sm mt-2">
+                  ตัวอักษรพิมพ์เล็กอย่างน้อย 1 ตัว
+                </p>
+              )}
+              {!containsNumber && formData.password.length > 0 && (
+                <p className="text-red-500 text-sm mt-2">
+                  ตัวเลขอย่างน้อย 1 ตัว
+                </p>
+              )}
+              {!containsSpecialChar && formData.password.length > 0 && (
+                <p className="text-red-500 text-sm mt-2">
+                  อักขระพิเศษอย่างน้อย 1 ตัว เช่น !@#$%^&*,.?":|-
+                </p>
+              )}
+            </div>
           </form>
-          <div className="text-left mt-5">
-          {!isValidEmail && formData.email.length > 0 && (
-              <p className="text-red-500 text-sm mt-2">
-                ใช้อีเมล @ku.th เท่านั้น
-              </p>
-            )}
-            {!isPasswordLongEnough && formData.password.length > 0 && (
-              <p className="text-red-500 text-sm mt-2">
-                รหัสผ่านต้องประกอบด้วย: ความยาวอย่างน้อย 8 ตัวอักษร
-              </p>
-            )}
-            {!containsUpperCase && formData.password.length > 0 && (
-              <p className="text-red-500 text-sm mt-2">
-                ตัวอักษรพิมพ์ใหญ่อย่างน้อย 1 ตัว
-              </p>
-            )}
-            {!containsLowerCase && formData.password.length > 0 && (
-              <p className="text-red-500 text-sm mt-2">
-                ตัวอักษรพิมพ์เล็กอย่างน้อย 1 ตัว
-              </p>
-            )}
-            {!containsNumber && formData.password.length > 0 && (
-              <p className="text-red-500 text-sm mt-2">
-                ตัวเลขอย่างน้อย 1 ตัว
-              </p>
-            )}
-            {!containsSpecialChar && formData.password.length > 0 && (
-              <p className="text-red-500 text-sm mt-2">
-                อักขระพิเศษอย่างน้อย 1 ตัว เช่น !@#$%^&*,.?":|-
-              </p>
-            )}
-          </div>
         </div>
       </div>
     </div>

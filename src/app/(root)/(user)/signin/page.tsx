@@ -1,7 +1,9 @@
+"use client"
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { Arimo } from 'next/font/google';
 import { Kanit } from 'next/font/google';
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 const arimo = Arimo({
   subsets: ['latin'], 
@@ -14,6 +16,54 @@ const kanit = Kanit({
 });
 
 const page = () => {
+  const [formData, setFormData] = useState({
+    email: "",
+    name: "",
+    password: "",
+    password2: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
+
+  const handleChange = (e: any) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+
+  const handleSubmit = (e:any) => {
+    e.preventDefault();
+    console.log("Form Data:", formData); 
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+  const togglePasswordVisibility2 = () => {
+    setShowPassword2((prev) => !prev);
+  };
+
+  const isValidEmail = formData.email.endsWith("@ku.th");
+  const isPasswordLongEnough = formData.password.length >= 8;
+  const containsUpperCase = /[A-Z]/.test(formData.password);
+  const containsLowerCase = /[a-z]/.test(formData.password);
+  const containsNumber = /[0-9]/.test(formData.password);
+  const containsSpecialChar = /[!@#$%^&*,.?":-]/.test(formData.password);
+  const samepassword = formData.password === formData.password2;
+  const isNamenotnull = formData.name.length > 3;
+
+  const isPasswordValid =
+    isPasswordLongEnough &&
+    containsUpperCase &&
+    containsLowerCase &&
+    containsNumber &&
+    containsSpecialChar &&
+    samepassword;
+
+  const isFormValid = isValidEmail && isPasswordValid && isNamenotnull;
   return (
     <div className="flex min-w-full min-h-full items-center justify-center p-8">
       <div className="py-8 text-center min-w-full min-h-full">
@@ -25,7 +75,7 @@ const page = () => {
             <p className="">ระบบจะทำการส่งหน้าแก้ไขรหัสผ่านไป</p>
             <p className="">ที่ผู้ใช้เพื่อทำการสร้างรหัสผ่านใหม่</p>
           </div>
-          <form className="max-w-md mx-auto">
+          <form className="max-w-md mx-auto" onSubmit={handleSubmit}>
             
             <div className="mb-3 text-left">
               <label
@@ -37,8 +87,10 @@ const page = () => {
               <input
                 type="email"
                 id="email"
+                value={formData.email}
+                onChange={handleChange}
                 className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-none"
-                placeholder="name.s@ku.th"
+                placeholder="ตัวอย่าง name.s@ku.th"
                 required
               />
             </div>
@@ -53,13 +105,15 @@ const page = () => {
               <input
                 type="name"
                 id="name"
+                value={formData.name}
+                onChange={handleChange}
                 className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-none"
                 placeholder="Jetsada"
                 required
               />
             </div>
             {/* รหัสผ่าน1 */}
-            <div className="mb-5 text-left">
+            <div className="mb-5 text-left relative">
               <label
                 htmlFor="password"
                 className="block mb-2 text-sm font-medium text-[#807777]"
@@ -67,15 +121,27 @@ const page = () => {
                 รหัสผ่าน
               </label>
               <input
-                type="password"
-                id="password1"
-                className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-none"
-                placeholder="รหัสผ่านไม่ต่ำกว่า 8 ตัวอักษร"
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="bg-transparent border border-gray-300 text-[#807777] text-sm rounded-lg block w-full p-2.5 focus:outline-none"
+                placeholder="ตัวอย่าง Abcd_1234"
                 required
               />
+              <div
+                className="absolute top-9 right-3 cursor-pointer text-gray-500"
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? (
+                  <AiOutlineEyeInvisible size={20} />
+                ) : (
+                  <AiOutlineEye size={20} />
+                )}
+              </div>
             </div>
             {/* รหัสผ่าน2 */}
-            <div className="mb-5 text-left">
+            <div className="mb-5 text-left relative">
               <label
                 htmlFor="password"
                 className="block mb-2 text-sm font-medium text-[#807777]"
@@ -83,12 +149,24 @@ const page = () => {
                 ยืนยันรหัสผ่าน
               </label>
               <input
-                type="password"
+                type={showPassword2 ? "text" : "password"}
                 id="password2"
+                value={formData.password2}
+                onChange={handleChange}
                 className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-none"
                 placeholder="กรอกรหัสผ่านที่ตรงกับด้านบน"
                 required
               />
+              <div
+                className="absolute top-9 right-3 cursor-pointer text-gray-500"
+                onClick={togglePasswordVisibility2}
+              >
+                {showPassword2 ? (
+                  <AiOutlineEyeInvisible size={20} />
+                ) : (
+                  <AiOutlineEye size={20} />
+                )}
+              </div>
             </div>
             <div className="flex justify-end pb-8">
               <div className="text-sm font-medium text-[#807777]">
@@ -97,10 +175,57 @@ const page = () => {
             </div>
             <button
               type="submit"
-              className="text-[#807777] shadow-md bg-[#FDE69E] font-medium rounded-full text-sm w-full sm:w-auto px-12 py-2.5 text-center"
+              disabled={!isFormValid}
+              className={`text-white font-medium rounded-full text-sm w-full sm:w-auto px-12 py-2.5 text-center ${
+                isFormValid
+                  ? "bg-green-500 hover:bg-green-600"
+                  : "bg-gray-300 cursor-not-allowed"
+              }`}
             >
               เข้าสู่ระบบ
             </button>
+            <div className="text-left mt-5">
+              {!isValidEmail && formData.email.length > 0 && (
+                <p className="text-red-500 text-sm mt-2">
+                  ใช้อีเมล @ku.th เท่านั้น
+                </p>
+              )}
+              {!isNamenotnull && formData.name.length > 0 && (
+                <p className="text-red-500 text-sm mt-2">
+                  ชื่อมีความยาวมากกว่า 3 ตัวอักษร
+                </p>
+              )}
+              {!isPasswordLongEnough && formData.password.length > 0 && (
+                <p className="text-red-500 text-sm mt-2">
+                  รหัสผ่านต้องประกอบด้วย: ความยาวอย่างน้อย 8 ตัวอักษร
+                </p>
+              )}
+              {!containsUpperCase && formData.password.length > 0 && (
+                <p className="text-red-500 text-sm mt-2">
+                  ตัวอักษรพิมพ์ใหญ่อย่างน้อย 1 ตัว
+                </p>
+              )}
+              {!containsLowerCase && formData.password.length > 0 && (
+                <p className="text-red-500 text-sm mt-2">
+                  ตัวอักษรพิมพ์เล็กอย่างน้อย 1 ตัว
+                </p>
+              )}
+              {!containsNumber && formData.password.length > 0 && (
+                <p className="text-red-500 text-sm mt-2">
+                  ตัวเลขอย่างน้อย 1 ตัว
+                </p>
+              )}
+              {!containsSpecialChar && formData.password.length > 0 && (
+                <p className="text-red-500 text-sm mt-2">
+                  อักขระพิเศษอย่างน้อย 1 ตัว เช่น !@#$%^&*,.?":|-
+                </p>
+              )}
+              {!samepassword && formData.password2.length > 0 && (
+                <p className="text-red-500 text-sm mt-2">
+                  รหัสผ่านตรงกันหรือไม่
+                </p>
+              )}
+            </div>
           </form>
         </div>
       </div>
