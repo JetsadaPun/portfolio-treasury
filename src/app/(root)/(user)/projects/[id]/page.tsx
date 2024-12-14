@@ -84,8 +84,6 @@ const Page = () => {
     router.back();
   };
 
-  
-
   return (
     <div className={`${kanit.className} min-h-screen`}>
       <div className="bg-[#FFFFFF] rounded-2xl mx-24 my-16 p-8">
