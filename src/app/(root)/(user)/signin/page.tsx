@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Arimo } from 'next/font/google';
 import { Kanit } from 'next/font/google';
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { useRouter, usePathname } from "next/navigation";
 
 const arimo = Arimo({
   subsets: ['latin'], 
@@ -16,6 +17,8 @@ const kanit = Kanit({
 });
 
 const page = () => {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     email: "",
     name: "",
@@ -26,18 +29,50 @@ const page = () => {
   const [showPassword2, setShowPassword2] = useState(false);
 
   const handleChange = (e: any) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
-  };
+      const { id, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [id]: value,
+      }));
+    };
 
 
-  const handleSubmit = (e:any) => {
+    const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log("Form Data:", formData); 
+    console.log("Submitting form", formData);
+
+    try {
+      const res = await fetch('http://localhost:8080/api/users/register', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      console.log("Response status:", res.status);
+      const result = await res.json();
+
+      console.log("สร้างผู้ใช้สำเร็จ:", result);
+      alert("สร้างผู้ใช้สำเร็จ!");
+      setFormData({
+        email: "",
+        name: "",
+        password: "",
+        password2: "",
+      });
+      router.push('/home');
+
+    } catch (err) {
+      console.error("เกิดข้อผิดพลาด:", err);
+      alert("เกิดข้อผิดพลาดในระบบ");
+    }
   };
+
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);

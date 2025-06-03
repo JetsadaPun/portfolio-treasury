@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Arimo } from "next/font/google";
 import { Kanit } from "next/font/google";
+import { useRouter, usePathname } from "next/navigation";
 
 const arimo = Arimo({
   subsets: ["latin"],
@@ -16,6 +17,7 @@ const kanit = Kanit({
 });
 
 const page = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -30,9 +32,33 @@ const page = () => {
     }));
   };
 
-  const handleSubmit = (e: any) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
-    console.log("Form Data:", formData);
+    console.log("Submitting form", formData);
+
+    try {
+      const response = await fetch('http://localhost:8080/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          email: formData.email,
+          password: formData.password,}),
+      });
+
+      const user = await response.json();
+      console.log('Login successful', user);
+
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message);
+      }
+      router.push('/home');
+    } catch (err) {
+      console.error("เกิดข้อผิดพลาด:", err);
+      alert("เกิดข้อผิดพลาดในระบบ");
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -64,7 +90,7 @@ const page = () => {
           <p className="text-sm text-[#807777] mb-8">
             ใส่ข้อมูลบัญชีผู้ใช้เพื่อเข้าสู่ระบบ
           </p>
-          <form className="max-w-md mx-auto" onSubmit={handleSubmit}>
+          <form className="max-w-md mx-auto" onSubmit={handleLogin}>
             <div className="mb-5 text-left">
               <label
                 htmlFor="email"
