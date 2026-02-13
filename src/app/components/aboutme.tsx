@@ -1,27 +1,36 @@
+"use client";
 import React from "react";
 
-const Aboutme = () => {
+interface AboutmeProps {
+  user?: any;
+  initialData?: any; // alternative name
+  isReadOnly?: boolean;
+}
+
+const Aboutme: React.FC<AboutmeProps> = ({ user, initialData, isReadOnly = false }) => {
+  const data = user || initialData;
+
   return (
-    <div className="">
-      <div className="flex text-gray-900 text-sm w-fit ">
-        <span className="font-bold mr-2">วันเกิด:</span>22 สิงหาคม 2546
-      </div>
-      <div className="text-gray-900 text-sm mt-2">
-        <span className="font-bold mr-2">ประวัติการศึกษา:</span> ปริญญาตรี
-        มหาวิทยาลัยฮอกวอตส์ หลักสูตรวิทยาการเวทมนตร์ป้องกันตัว
+    <div className="w-full">
+      <div className="flex text-gray-900 text-sm w-fit mb-4 items-center">
+        <span className="font-bold mr-3 text-gray-700 min-w-[100px]">วันเกิด:</span>
+        <span className="text-gray-600 bg-gray-50 px-3 py-1 rounded-lg">
+          {data?.dob || "ยังไม่ได้ระบุ"}
+        </span>
       </div>
 
-      <div className="text-gray-900 text-sm mt-2">
-        <span className="font-bold mr-2">ประวัติส่วนตัว: </span> Lorem Ipsum is
-        simply dummy text of the printing and typesetting industry. Lorem Ipsum
-        has been the industry's standard dummy text ever since the 1500s, when
-        an unknown printer took a galley of type and scrambled it to make a type
-        specimen book. It has survived not only five centuries, but also the
-        leap into electronic typesetting, remaining essentially unchanged. It
-        was popularised in the 1960s with the release of Letraset sheets
-        containing Lorem Ipsum passages, and more recently with desktop
-        publishing software like Aldus PageMaker including versions of Lorem
-        Ipsum.
+      <div className="text-gray-900 text-sm mt-4 flex items-start">
+        <span className="font-bold mr-3 text-gray-700 min-w-[100px] mt-1">การศึกษา:</span>
+        <div className="text-gray-600 bg-gray-50 px-3 py-2 rounded-lg flex-1 min-h-[40px]">
+          {data?.education || "ยังไม่ได้ระบุ"}
+        </div>
+      </div>
+
+      <div className="text-gray-900 text-sm mt-6 flex flex-col">
+        <span className="font-bold mb-3 text-gray-700">ประวัติส่วนตัว:</span>
+        <div className="text-gray-600 leading-relaxed bg-gray-50 p-5 rounded-2xl border border-gray-100 italic min-h-[100px]">
+          {data?.bio || "ยังไม่ได้ระบุข้อมูลประวัติส่วนตัว"}
+        </div>
       </div>
     </div>
   );

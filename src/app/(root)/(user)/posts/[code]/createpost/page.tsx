@@ -1,24 +1,29 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Kanit } from "next/font/google";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
+import Swal from "sweetalert2";
 
 const kanit = Kanit({
   subsets: ["thai", "latin"],
   weight: "300",
 });
 
+const API_BASE = "http://localhost:8080";
+
 const Page = () => {
   const router = useRouter();
-  const subjects = [
-    {
-      code: "01418496 - 65",
-      title: "เรื่องเฉพาะทางวิทยาการคอมพิวเตอร์",
-      subtitle: "Selected Topic in Computer Science",
-    },
-  ];
+  const params = useParams();
+  const { code } = params;
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    projectName: string;
+    projectDetails: string;
+    projectImage: File | null;
+    projectLink: string;
+    projectDocument: File | null;
+    members: string[];
+  }>({
     projectName: "",
     projectDetails: "",
     projectImage: null,
@@ -29,6 +34,22 @@ const Page = () => {
 
   const projectImageRef = useRef<HTMLInputElement | null>(null);
   const projectDocumentRef = useRef<HTMLInputElement | null>(null);
+
+  const decodeJwt = (token: string) => {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      return null;
+    }
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -45,15 +66,34 @@ const Page = () => {
     if (files && files[0]) {
       const file = files[0];
 
-      // ตรวจสอบว่าไฟล์เป็นรูปภาพ
-      //ไปแก้ ทำไมต้องขึ้นต้นด้วย image///////////////////////////////////////////////////////////////////////
-      if (file.type.startsWith("image/")) {
-        setFormData((prev) => ({
-          ...prev,
-          [name]: file,
-        }));
-      } else {
-        alert("กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น");
+      if (name === "projectImage") {
+        if (file.type.startsWith("image/")) {
+          setFormData((prev) => ({
+            ...prev,
+            [name]: file,
+          }));
+        } else {
+          Swal.fire({
+            title: "ไฟล์ไม่ถูกต้อง",
+            text: "กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น",
+            icon: "warning",
+            confirmButtonColor: "#FDA49E"
+          });
+        }
+      } else if (name === "projectDocument") {
+        if (file.type === "application/pdf") {
+          setFormData((prev) => ({
+            ...prev,
+            [name]: file,
+          }));
+        } else {
+          Swal.fire({
+            title: "ไฟล์ไม่ถูกต้อง",
+            text: "กรุณาอัปโหลดไฟล์ PDF เท่านั้น",
+            icon: "warning",
+            confirmButtonColor: "#FDA49E"
+          });
+        }
       }
     }
   };
@@ -68,76 +108,137 @@ const Page = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("ข้อมูลที่ส่ง:", formData);
 
-    const formDataToSend = new FormData();
-    formDataToSend.append("projectName", formData.projectName);
-    formDataToSend.append("projectDetails", formData.projectDetails);
-    if (formData.projectImage) {
-      formDataToSend.append("projectImage", formData.projectImage);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      Swal.fire("กรุณาเข้าสู่ระบบ", "คุณต้องเข้าสู่ระบบก่อนเพิ่มโปรเจกต์", "error");
+      router.push("/login");
+      return;
     }
-    formDataToSend.append("projectLink", formData.projectLink);
-    if (formData.projectDocument) {
-      formDataToSend.append("projectDocument", formData.projectDocument);
-    }
-    // ส่งข้อมูลไปยัง API หรือ backend
 
-    // รีเซ็ตฟอร์มหลังจากส่งข้อมูล
-    setFormData({
-      projectName: "",
-      projectDetails: "",
-      projectImage: null,
-      projectLink: "",
-      projectDocument: null,
-      members: ["You"],
-    });
+    try {
+      Swal.fire({
+        title: "กำลังบันทึก...",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
 
-    // ล้างไฟล์ที่เลือก
-    if (projectImageRef.current) {
-      projectImageRef.current.value = "";
-    }
-    if (projectDocumentRef.current) {
-      projectDocumentRef.current.value = "";
+      // 1. Decode token to get email
+      const decoded = decodeJwt(token);
+      const email = decoded?.sub; // JWT subject is email
+
+      if (!email) throw new Error("Invalid token");
+
+      // 2. Fetch User ID from profile endpoint
+      const profileResp = await fetch(`${API_BASE}/api/users/profile/${email}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (!profileResp.ok) throw new Error("Could not fetch user profile");
+      const profile = await profileResp.json();
+      const userId = profile.id;
+
+      // 3. Find Subject ID
+      const subjectsResp = await fetch(`${API_BASE}/api/subjects`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (!subjectsResp.ok) throw new Error("Could not fetch subjects list");
+
+      const subjects = await subjectsResp.json();
+
+      let subjectId = 1; // default fallback
+
+      if (Array.isArray(subjects)) {
+        const matchedSubject = subjects.find((s: any) =>
+          code?.toString().toLowerCase() === s.subjectNameId?.toLowerCase()
+        );
+        if (matchedSubject) {
+          subjectId = matchedSubject.subjectId;
+        } else {
+          console.warn("No matching subject found for code:", code, "using default ID 1");
+        }
+      } else {
+        console.error("Subjects data is not an array:", subjects);
+        throw new Error("Invalid data format received from server");
+      }
+
+      // 4. Send Post Request
+      const postData = {
+        subjectId: subjectId,
+        projectName: formData.projectName,
+        projectDetail: formData.projectDetails,
+        projectImage: "", // Backend currently expects String for URL
+        projectLink: formData.projectLink,
+        projectDocs: "",  // Backend currently expects String for URL
+        userId: userId
+      };
+
+      const response = await fetch(`${API_BASE}/api/posts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(postData)
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || "Failed to save post");
+      }
+
+      await Swal.fire({
+        title: "สำเร็จ!",
+        text: "บันทึกข้อมูลโปรเจกต์ของคุณเรียบร้อยแล้ว",
+        icon: "success",
+        confirmButtonText: "ตกลง",
+        confirmButtonColor: "#AAD7BF",
+      });
+
+      router.push(`/posts/${code}`);
+    } catch (error: any) {
+      Swal.fire({
+        title: "เกิดข้อผิดพลาด",
+        text: error.message || "ไม่สามารถบันทึกข้อมูลได้ในขณะนี้",
+        icon: "error",
+        confirmButtonText: "รับทราบ",
+        confirmButtonColor: "#FDA49E",
+      });
     }
   };
 
   const handleCancel = () => {
-    console.log("ยกเลิกการกรอกข้อมูล");
-
-    // ล้างไฟล์ที่เลือกเมื่อยกเลิก
-    if (projectImageRef.current) {
-      projectImageRef.current.value = "";
-    }
-    if (projectDocumentRef.current) {
-      projectDocumentRef.current.value = "";
-    }
-    router.push("/home");
+    Swal.fire({
+      title: "แน่ใจหรือไม่?",
+      text: "ข้อมูลที่คุณกรอกจะสูญหาย",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "ใช่, ยกเลิก",
+      cancelButtonText: "กรอกข้อมูลต่อ",
+      confirmButtonColor: "#FDA49E",
+      cancelButtonColor: "#gray",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        router.push("/home");
+      }
+    });
   };
 
   return (
     <div className={`${kanit.className} min-h-screen`}>
       <div className="bg-[#FFFFFF] rounded-2xl mx-24 my-16 p-8">
-        {/* หัวข้อ */}
         <div className="relative mb-6">
-          {subjects.map((subject, index) => (
-            <div key={index}>
-              <h2 className="text-lg font-medium text-black">
-                {subject.code} {subject.title}
-              </h2>
-              <h3 className="text-sm text-gray-500">{subject.subtitle}</h3>
-            </div>
-          ))}
+          <h2 className="text-lg font-medium text-black">
+            สร้างรีวิว/ผลงานสำหรับวิชา: {code}
+          </h2>
         </div>
 
-        {/* ฟอร์ม */}
         <form onSubmit={handleSubmit}>
-          {/* ชื่อโปรเจกต์ */}
           <div className="mb-6">
-            <label className="block text-base font-medium text-black">
-              ชื่อโปรเจกต์
-            </label>
+            <label className="block text-base font-medium text-black">ชื่อโปรเจกต์</label>
             <input
               type="text"
               name="projectName"
@@ -145,14 +246,12 @@ const Page = () => {
               value={formData.projectName}
               onChange={handleInputChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 text-gray-700 focus:ring-2 focus:ring-blue-300 focus:outline-none"
+              required
             />
           </div>
 
-          {/* รายละเอียดเกี่ยวกับโปรเจกต์ */}
           <div className="mb-6">
-            <label className="block text-base font-medium text-black">
-              รายละเอียดเกี่ยวกับโปรเจกต์
-            </label>
+            <label className="block text-base font-medium text-black">รายละเอียดเกี่ยวกับโปรเจกต์</label>
             <textarea
               name="projectDetails"
               placeholder="เพิ่มรายละเอียดเกี่ยวกับโปรเจกต์..."
@@ -160,29 +259,24 @@ const Page = () => {
               value={formData.projectDetails}
               onChange={handleInputChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 text-gray-700 focus:ring-2 focus:ring-blue-300 focus:outline-none resize-none"
+              required
             ></textarea>
           </div>
 
-          {/* เพิ่มรูปภาพโปรเจกต์ */}
           <div className="mb-6">
-            <label className="block text-base font-medium text-black">
-              เพิ่มรูปภาพโปรเจกต์
-            </label>
+            <label className="block text-base font-medium text-black">เพิ่มรูปภาพโปรเจกต์ (URL หรือจะอัปโหลดภายหลัง)</label>
             <input
               ref={projectImageRef}
               type="file"
               name="projectImage"
               onChange={handleFileChange}
               className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-md file:bg-gray-50 hover:file:bg-gray-100"
-              accept="image/*" // จำกัดไฟล์ที่เป็นรูปภาพเท่านั้น
+              accept="image/*"
             />
           </div>
 
-          {/* เพิ่มลิงก์ไปที่งาน */}
           <div className="mb-6">
-            <label className="block text-base font-medium text-black">
-              เพิ่มลิงก์ไปที่งาน <span className="text-red-500">*</span>
-            </label>
+            <label className="block text-base font-medium text-black">เพิ่มลิงก์ไปที่งาน <span className="text-red-500">*</span></label>
             <input
               type="url"
               name="projectLink"
@@ -194,27 +288,20 @@ const Page = () => {
             />
           </div>
 
-          {/* เอกสารเกี่ยวกับโปรเจกต์ */}
           <div className="mb-6">
-            <label className="block text-lg font-medium text-black">
-              เอกสารเกี่ยวกับโปรเจกต์ <span className="text-red-500">*</span>
-            </label>
+            <label className="block text-lg font-medium text-black">เอกสารเกี่ยวกับโปรเจกต์ (PDF)</label>
             <input
               ref={projectDocumentRef}
               type="file"
               name="projectDocument"
               onChange={handleFileChange}
               className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-md file:bg-gray-50 hover:file:bg-gray-100"
-              accept=".pdf" // กำหนดให้เลือกเฉพาะไฟล์ PDF
-              required
+              accept=".pdf"
             />
           </div>
 
-          {/* เพิ่มสมาชิกโปรเจกต์ */}
           <div className="mb-6">
-            <label className="block text-base font-medium text-black">
-              เพิ่มสมาชิกโปรเจกต์
-            </label>
+            <label className="block text-base font-medium text-black">สมาชิกโปรเจกต์</label>
             <div className="mt-2 flex items-center space-x-4">
               {formData.members.map((member, index) => (
                 <div key={index} className="flex items-center space-x-2">
@@ -222,30 +309,13 @@ const Page = () => {
                   <p className="ml-2 text-sm text-gray-700">{member}</p>
                 </div>
               ))}
-              <button
-                type="button"
-                onClick={handleAddMember}
-                className="text-black hover:underline text-sm"
-              >
-                + เพิ่มสมาชิก
-              </button>
+              <button type="button" onClick={handleAddMember} className="text-black hover:underline text-sm">+ เพิ่มสมาชิก</button>
             </div>
           </div>
 
-          {/* ปุ่มยืนยันและยกเลิก */}
           <div className="flex justify-between mt-8">
-            <button
-              onClick={handleCancel}
-              className="text-black bg-[#FDA49E] py-2 px-6 rounded-[15px] m-6"
-            >
-              ยกเลิก
-            </button>
-            <button
-              type="submit"
-              className="text-black bg-[#AAD7BF] py-2 px-6 rounded-[15px] m-6"
-            >
-              ยืนยัน
-            </button>
+            <button type="button" onClick={handleCancel} className="text-black bg-[#FDA49E] py-2 px-6 rounded-[15px] m-6">ยกเลิก</button>
+            <button type="submit" className="text-black bg-[#AAD7BF] py-2 px-6 rounded-[15px] m-6">ยืนยัน</button>
           </div>
         </form>
       </div>

@@ -1,92 +1,147 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Kanit } from "next/font/google";
 import PersonIcon from "@mui/icons-material/Person";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import Aboutme from "@/app/components/aboutme";
 import Project from "@/app/components/project";
-import EditProfile from "@/app/components/editprofile";
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+
 const kanit = Kanit({
   subsets: ["thai", "latin"],
   weight: "300",
 });
-const page = () => {
+
+const API_BASE = "http://localhost:8080";
+
+const PeopleProfilePage = () => {
   const params = useParams();
-  const code = params?.code;
+  const router = useRouter();
+  const code = params?.code as string;
   const [selectedTab, setSelectedTab] = useState("project");
-  const profiles = [
-      {
-        code: "6521600192",
-        profile_pic: "https://randomuser.me/api/portraits/men/1.jpg",
-        name: "นายบีชอบกินไก่ปิ้ง",
-      },
-      {
-        code: "6521600176",
-        profile_pic: "https://randomuser.me/api/portraits/men/2.jpg",
-        name: "นายบีบอย",
-      },
-      {
-        code: "6521600125",
-        profile_pic: "https://randomuser.me/api/portraits/men/3.jpg",
-        name: "นายเอลอย",
-      },
-    ];
-    const person = profiles.find((p) => p.code === code);
+  const [person, setPerson] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (code) {
+      fetchUserProfile();
+    }
+  }, [code]);
+
+  const fetchUserProfile = async () => {
+    setLoading(true);
+    try {
+      // Try fetching by studentId first (the 'code' we passed)
+      const response = await fetch(`${API_BASE}/api/users/${code}`);
+      if (response.ok) {
+        const data = await response.json();
+        setPerson(data);
+      } else {
+        // If not found by studentId, it might be a userId (UUID)
+        // Note: For now we only have /{studentId} endpoint, 
+        // but we could also have /profile/{email} or similar.
+        console.error("User not found");
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className={`${kanit.className} min-h-screen flex items-center justify-center`}>
+        กำลังโหลดโปรไฟล์...
+      </div>
+    );
+  }
+
+  if (!person) {
+    return (
+      <div className={`${kanit.className} min-h-screen flex flex-col items-center justify-center`}>
+        <p className="mb-4 text-xl text-gray-400">ไม่พบโปรไฟล์ที่ระบุ</p>
+        <button
+          onClick={() => router.push('/searchprofile')}
+          className="bg-blue-500 text-white px-6 py-2 rounded-xl"
+        >
+          กลับไปค้นหา
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div
-      className={`${kanit.className} min-h-screen flex items-start justify-center`}
-    >
-      <div className="bg-[#FFFFFF] rounded-2xl mx-6 md:mx-28 p-6 md:p-12 shadow-lg flex flex-col items-center w-screen h-full">
+    <div className={`${kanit.className} min-h-screen flex items-start justify-center py-10`}>
+      <div className="bg-[#FFFFFF] rounded-2xl mx-6 md:mx-28 p-6 md:p-12 shadow-lg flex flex-col items-center w-full max-w-5xl">
+
+        <div className="w-full flex justify-start mb-6">
+          <button
+            onClick={() => router.back()}
+            className="text-gray-500 hover:text-black transition-colors"
+          >
+            ← กลับ
+          </button>
+        </div>
+
         <div className="mb-4 text-2xl font-semibold text-gray-700">
-          {person?.name || "default"}
+          {person.name}
         </div>
         <div className="mb-4">
           <img
-            src={person?.profile_pic || "default.jpg"}  // fallback เป็น default หากไม่เจอ
-            alt={person?.name || "profile"}
-            className="w-40 h-40 rounded-full object-cover"
-            />
-        </div>
-        <div className="flex items-center text-center gap-4 w-full flex-col md:flex-row my-4">
-          <div className="text-gray-700 flex-1 text-right">
-            อีเมล: example@example.com
-          </div>
-          <div className="hidden md:flex mx-4 w-[1px] h-6 bg-black"></div>
-          <div className="text-gray-700 flex-1 text-left">
-            เบอร์โทร: 081-234-5678
-          </div>
-        </div>
-        <div className="flex gap-4 w-full relative">
-          <div
-            className={`text-gray-700 flex text-left cursor-pointer ${
-              selectedTab === "project"
-                ? "font-bold border-b-2 border-[#2807E3] pb-2"
-                : "text-base"
-            }`}
-            onClick={() => setSelectedTab("project")}
-          >
-            <AssignmentIcon /> โปรเจกต์
-          </div>
-          <div className="mx-1 md:mx-4 w-[1px] h-6 bg-black"></div>
-          <div
-            className={`text-gray-700 flex text-left cursor-pointer ${
-              selectedTab === "aboutme"
-                ? "font-bold border-b-2 border-[#2807E3] pb-2"
-                : "text-base"
-            }`}
-            onClick={() => setSelectedTab("aboutme")}
-          >
-            <PersonIcon /> เกี่ยวกับฉัน
-          </div>
-          <div className="absolute bottom-0 left-0 w-full h-[1px] bg-black mt-2"></div>
+            src={person.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=random`}
+            alt={person.name}
+            className="w-40 h-40 rounded-full object-cover border-4 border-white shadow-md"
+          />
         </div>
 
-        
+        <div className="text-gray-400 text-sm mb-4">
+          {person.studentId ? `รหัสนักศึกษา: ${person.studentId}` : ""}
+        </div>
+
+        <div className="flex items-center text-center gap-4 w-full flex-col md:flex-row my-4 px-4 bg-gray-50 py-4 rounded-2xl">
+          <div className="text-gray-600 flex-1">
+            <span className="font-bold mr-2 text-gray-400">อีเมล:</span>
+            {person.email}
+          </div>
+          <div className="hidden md:flex w-[1px] h-6 bg-gray-200"></div>
+          <div className="text-gray-600 flex-1">
+            <span className="font-bold mr-2 text-gray-400">เบอร์โทร:</span>
+            {person.phone || "ไม่ได้ระบุ"}
+          </div>
+        </div>
+
+        <div className="flex gap-8 w-full relative mt-6 border-b border-gray-100">
+          <div
+            className={`flex items-center gap-2 cursor-pointer pb-3 transition-all ${selectedTab === "project"
+                ? "font-bold text-blue-600 border-b-2 border-blue-600"
+                : "text-gray-400 hover:text-gray-600"
+              }`}
+            onClick={() => setSelectedTab("project")}
+          >
+            <AssignmentIcon fontSize="small" /> โปรเจกต์
+          </div>
+          <div
+            className={`flex items-center gap-2 cursor-pointer pb-3 transition-all ${selectedTab === "aboutme"
+                ? "font-bold text-blue-600 border-b-2 border-blue-600"
+                : "text-gray-400 hover:text-gray-600"
+              }`}
+            onClick={() => setSelectedTab("aboutme")}
+          >
+            <PersonIcon fontSize="small" /> เกี่ยวกับฉัน
+          </div>
+        </div>
+
+        <div className="w-full mt-8">
+          {selectedTab === "project" ? (
+            <Project userId={person.id} />
+          ) : (
+            <Aboutme initialData={person} isReadOnly={true} />
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default page;
+export default PeopleProfilePage;

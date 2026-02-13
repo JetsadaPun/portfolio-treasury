@@ -17,10 +17,45 @@ const kanit = Kanit({
 
 const Nav = () => {
   const router = useRouter();
-  const pathname = usePathname(); 
+  const pathname = usePathname();
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [isAdmin, setIsAdmin] = React.useState(false);
+
+  const decodeJwt = (token: string) => {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  React.useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+    if (token) {
+      const decoded = decodeJwt(token);
+      setIsAdmin(decoded?.role === "ADMIN");
+    } else {
+      setIsAdmin(false);
+    }
+  }, [pathname]);
 
   const handlehomepage = () => {
     router.push(`/home`);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    router.push("/login");
   };
 
   return (
@@ -67,9 +102,8 @@ const Nav = () => {
               <li>
                 <a
                   href="/searchprofile"
-                  className={`block py-2 px-3 md:p-0 ${
-                    pathname === "/searchprofile" ? "text-black" : "text-white"
-                  }`}
+                  className={`block py-2 px-3 md:p-0 ${pathname === "/searchprofile" ? "text-black" : "text-white"
+                    }`}
                   aria-current="page"
                 >
                   ค้นหาโปรไฟล์เพื่อน
@@ -78,33 +112,52 @@ const Nav = () => {
               <li>
                 <a
                   href="/searchproject"
-                  className={`block py-2 px-3 md:p-0 ${
-                    pathname === "/searchproject" ? "text-black" : "text-white"
-                  }`}
+                  className={`block py-2 px-3 md:p-0 ${pathname === "/searchproject" ? "text-black" : "text-white"
+                    }`}
                 >
                   ค้นหาโปรเจกต์
                 </a>
               </li>
+              {isAdmin && (
+                <li>
+                  <a
+                    href="/subjects"
+                    className={`block py-2 px-3 md:p-0 ${pathname === "/subjects" ? "text-yellow-300" : "text-yellow-400 font-bold"
+                      }`}
+                  >
+                    Admin: จัดการวิชา
+                  </a>
+                </li>
+              )}
               <li>
                 <a
                   href="/profile"
-                  className={`block py-2 px-3 md:p-0 ${
-                    pathname === "/profile" ? "text-black" : "text-white"
-                  }`}
+                  className={`block py-2 px-3 md:p-0 ${pathname === "/profile" ? "text-black" : "text-white"
+                    }`}
                 >
                   โปรไฟล์
                 </a>
               </li>
-              <li>
-                <a
-                  href="/login"
-                  className={`block py-2 px-3 md:p-0 ${
-                    pathname === "/login" ? "text-black" : "text-white"
-                  }`}
-                >
-                  ลงชื่อเข้าใช้
-                </a>
-              </li>
+              {isLoggedIn ? (
+                <li>
+                  <button
+                    onClick={handleLogout}
+                    className="block py-2 px-3 md:p-0 text-white hover:text-red-400"
+                  >
+                    ลงชื่อออก
+                  </button>
+                </li>
+              ) : (
+                <li>
+                  <a
+                    href="/login"
+                    className={`block py-2 px-3 md:p-0 ${pathname === "/login" ? "text-black" : "text-white"
+                      }`}
+                  >
+                    ลงชื่อเข้าใช้
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>

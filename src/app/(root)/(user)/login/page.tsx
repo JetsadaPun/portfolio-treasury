@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { FcGoogle } from "react-icons/fc";
 import { Arimo } from "next/font/google";
 import { Kanit } from "next/font/google";
 import { useRouter, usePathname } from "next/navigation";
@@ -42,12 +43,17 @@ const page = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           email: formData.email,
-          password: formData.password,}),
+          password: formData.password,
+        }),
       });
 
       const user = await response.json();
+      if (response.ok && user.token) {
+        localStorage.setItem('token', user.token); // เก็บ token ไว้ในเครื่อง
+        router.push('/home');
+      }
       console.log('Login successful', user);
 
       if (!response.ok) {
@@ -61,11 +67,16 @@ const page = () => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    // Redirect ไปยัง Backend เพื่อเริ่มกระบวนการ OAuth2
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
+
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
 
-  const isValidEmail = formData.email.endsWith("@ku.th");
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
   const isPasswordLongEnough = formData.password.length >= 8;
   const containsUpperCase = /[A-Z]/.test(formData.password);
   const containsLowerCase = /[a-z]/.test(formData.password);
@@ -104,7 +115,7 @@ const page = () => {
                 value={formData.email}
                 onChange={handleChange}
                 className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-none"
-                placeholder="ตัวอย่าง name.s@ku.th"
+                placeholder="ตัวอย่าง name@email.com"
                 required
               />
             </div>
@@ -146,18 +157,32 @@ const page = () => {
             <button
               type="submit"
               disabled={!isFormValid}
-              className={`text-white font-medium rounded-full text-sm w-full sm:w-auto px-12 py-2.5 text-center ${
-                isFormValid
-                  ? "bg-green-500 hover:bg-green-600"
-                  : "bg-gray-300 cursor-not-allowed"
-              }`}
+              className={`text-white font-medium rounded-full text-sm w-full sm:w-auto px-12 py-2.5 text-center transition-all ${isFormValid
+                ? "bg-green-500 hover:bg-green-600 active:scale-95"
+                : "bg-gray-300 cursor-not-allowed"
+                }`}
             >
               เข้าสู่ระบบ
+            </button>
+
+            <div className="flex items-center my-6 max-w-md mx-auto">
+              <div className="flex-grow border-t border-gray-300"></div>
+              <span className="px-4 text-gray-400 text-sm">หรือ</span>
+              <div className="flex-grow border-t border-gray-300"></div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              className="flex items-center justify-center gap-3 w-full max-w-md mx-auto bg-white border border-gray-200 py-2.5 rounded-full hover:bg-gray-50 transition-all active:scale-95 shadow-sm text-gray-700 font-medium"
+            >
+              <FcGoogle size={24} />
+              <span>เข้าสู่ระบบด้วย Google</span>
             </button>
             <div className="text-left mt-5">
               {!isValidEmail && formData.email.length > 0 && (
                 <p className="text-red-500 text-sm mt-2">
-                  ใช้อีเมล @ku.th เท่านั้น
+                  รูปแบบอีเมลไม่ถูกต้อง
                 </p>
               )}
               {!isPasswordLongEnough && formData.password.length > 0 && (

@@ -5,8 +5,8 @@ import { Arimo } from 'next/font/google';
 import { Kanit } from 'next/font/google';
 
 const arimo = Arimo({
-  subsets: ['latin'], 
-  weight: '700', 
+  subsets: ['latin'],
+  weight: '700',
 });
 
 const kanit = Kanit({
@@ -29,12 +29,12 @@ const page = () => {
   };
 
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log("Form Data:", formData); 
+    console.log("Form Data:", formData);
   };
 
-  const isValidEmail = formData.email.endsWith("@ku.th");
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
   return (
     <div className="flex min-w-full min-h-full items-center justify-center p-8">
       <div className="py-8 text-center min-w-full min-h-full">
@@ -48,7 +48,7 @@ const page = () => {
           </div>
           <form className="max-w-md mx-auto" onSubmit={handleSubmit}>
             <div className="mb-5 text-left">
-            <label
+              <label
                 htmlFor="email"
                 className="block mb-2 text-sm font-medium text-[#807777]"
               >
@@ -60,7 +60,7 @@ const page = () => {
                 value={formData.email}
                 onChange={handleChange}
                 className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-none"
-                placeholder="ตัวอย่าง name.s@ku.th"
+                placeholder="ตัวอย่าง name@email.com"
                 required
               />
             </div>
@@ -72,18 +72,17 @@ const page = () => {
             <button
               type="submit"
               disabled={!isValidEmail}
-              className={`text-white font-medium rounded-full text-sm w-full sm:w-auto px-12 py-2.5 text-center ${
-                isValidEmail
-                  ? "bg-green-500 hover:bg-green-600"
-                  : "bg-gray-300 cursor-not-allowed"
-              }`}
+              className={`text-white font-medium rounded-full text-sm w-full sm:w-auto px-12 py-2.5 text-center ${isValidEmail
+                ? "bg-green-500 hover:bg-green-600"
+                : "bg-gray-300 cursor-not-allowed"
+                }`}
             ><Link href="/ForgotPassword/resetpassword">ส่งอีเมลยืนยัน</Link>
 
             </button>
             <div className="text-left mt-5">
               {!isValidEmail && formData.email.length > 0 && (
                 <p className="text-red-500 text-sm mt-2">
-                  ใช้อีเมล @ku.th เท่านั้น
+                  รูปแบบอีเมลไม่ถูกต้อง
                 </p>
               )}
             </div>

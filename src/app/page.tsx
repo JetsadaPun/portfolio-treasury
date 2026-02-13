@@ -6,7 +6,12 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push("/home");
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+    } else {
+      router.push("/home");
+    }
   }, [router]);
 
   return null;
