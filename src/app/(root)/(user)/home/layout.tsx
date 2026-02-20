@@ -1,7 +1,7 @@
 import React from "react";
 import FolderIcon from "@mui/icons-material/Folder";
 import { IconButton } from "@mui/material";
-import Nav from "@/app/components/nav";
+import UserNav from "@/app/components/usernav";
 
 export default function RootLayout({
   children,
@@ -10,8 +10,8 @@ export default function RootLayout({
 }>) {
   return (
     <div className="bg-gradient-to-b from-[#4D7CBF] to-[#AFBDD0] min-h-screen text-white relative">
-      <Nav/>
-      <main>{children}</main>
+      <UserNav />
+      <main className="pt-24">{children}</main>
     </div>
   );
 }

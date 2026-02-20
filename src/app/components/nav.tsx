@@ -119,15 +119,26 @@ const Nav = () => {
                 </a>
               </li>
               {isAdmin && (
-                <li>
-                  <a
-                    href="/subjects"
-                    className={`block py-2 px-3 md:p-0 ${pathname === "/subjects" ? "text-yellow-300" : "text-yellow-400 font-bold"
-                      }`}
-                  >
-                    Admin: จัดการวิชา
-                  </a>
-                </li>
+                <>
+                  <li>
+                    <a
+                      href="/subjects"
+                      className={`block py-2 px-3 md:p-0 ${pathname === "/subjects" ? "text-yellow-300" : "text-yellow-400 font-bold"
+                        }`}
+                    >
+                      จัดการวิชา
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="/reports"
+                      className={`block py-2 px-3 md:p-0 ${pathname === "/reports" ? "text-yellow-300" : "text-yellow-400 font-bold"
+                        }`}
+                    >
+                      จัดการรายงาน
+                    </a>
+                  </li>
+                </>
               )}
               <li>
                 <a
@@ -144,7 +155,7 @@ const Nav = () => {
                     onClick={handleLogout}
                     className="block py-2 px-3 md:p-0 text-white hover:text-red-400"
                   >
-                    ลงชื่อออก
+                    ออกจากระบบ
                   </button>
                 </li>
               ) : (

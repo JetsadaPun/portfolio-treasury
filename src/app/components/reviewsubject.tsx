@@ -1,9 +1,10 @@
 import React from "react";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import GroupsIcon from "@mui/icons-material/Groups";
 import ShareIcon from "@mui/icons-material/Share";
 import { useRouter } from "next/navigation";
+import ReportIcon from "@mui/icons-material/Report";
+import Swal from "sweetalert2";
 
 interface Document {
   name: string;
@@ -18,10 +19,9 @@ interface ReviewProps {
   image: string;
   comment: number;
   likeCount: number;
-  views: number;
-  documents?: Document[];  
-  github?: string;         
-  membertag?: string[];   
+  documents?: Document[];
+  github?: string;
+  membertag?: string[];
   showDocuments?: boolean; // ควบคุมการแสดงเอกสาร
   showGithub?: boolean;    // ควบคุมการแสดง GitHub
   showMemberTags?: boolean; // ควบคุมการแสดงสมาชิกโปรเจกต์
@@ -36,7 +36,6 @@ const Reviewsubject: React.FC<ReviewProps> = ({
   image,
   comment,
   likeCount,
-  views,
   documents = [],
   github = "",
   membertag = [],
@@ -46,15 +45,59 @@ const Reviewsubject: React.FC<ReviewProps> = ({
   postId,
 }) => {
   const router = useRouter();
+
+  const handleReport = async () => {
+    const { value: reason } = await Swal.fire({
+      title: "รายงานโพสต์",
+      input: "textarea",
+      inputLabel: "สาเหตุที่รายงาน",
+      inputPlaceholder: "ระบุเหตุผล เช่น เนื้อหาไม่เหมาะสม, ข้อมูลเท็จ...",
+      showCancelButton: true,
+      confirmButtonText: "ส่งรายงาน",
+      cancelButtonText: "ยกเลิก",
+      inputValidator: (value) => {
+        if (!value) {
+          return "กรุณาระบุเหตุผลในการรายงาน";
+        }
+      }
+    });
+
+    if (reason) {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        Swal.fire("ผิดพลาด", "กรุณาเข้าสู่ระบบก่อนรายงาน", "error");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:8080/api/reports", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ postId, reason })
+        });
+
+        if (res.ok) {
+          Swal.fire("สำเร็จ", "ส่งรายงานเรียบร้อยแล้ว แอดมินจะดำเนินการตรวจสอบโดยเร็วที่สุด", "success");
+        } else {
+          Swal.fire("ผิดพลาด", "ไม่สามารถส่งรายงานได้ในขณะนี้", "error");
+        }
+      } catch (error) {
+        Swal.fire("ผิดพลาด", "เกิดข้อผิดพลาดในการเชื่อมต่อ", "error");
+      }
+    }
+  };
   return (
     <div className="relative rounded-2xl w-full border-[1px] border-black p-4 cursor-pointer"
-    onClick={() => router.push(`/projects/${postId}`)}>
+      onClick={() => router.push(`/projects/${postId}`)}>
       {/* ข้อมูลผู้ใช้และวันที่ */}
       <div className="flex items-center mb-2">
         <p className="text-base font-medium text-black mr-2">{username}</p>
         <p className="text-base text-gray-500">{date}</p>
       </div>
-      
+
       {/* ชื่อโปรเจกต์ */}
       <p className="text-base font-medium text-black inline">ชื่อโปรเจกต์: </p>
       <span className="text-base text-black">{projectName}</span>
@@ -88,11 +131,14 @@ const Reviewsubject: React.FC<ReviewProps> = ({
           <div>
             <ThumbUpIcon /> ความชอบ: {likeCount}
           </div>
-          <div>
-            <GroupsIcon /> จำนวนผู้เข้าชม: {views}
-          </div>
         </div>
-        <div>
+        <div className="flex gap-4">
+          <div className="hover:text-red-500 transition-colors" title="รายงานโพสต์" onClick={(e) => {
+            e.stopPropagation();
+            handleReport();
+          }}>
+            <ReportIcon /> รายงาน
+          </div>
           <ShareIcon />
         </div>
       </div>

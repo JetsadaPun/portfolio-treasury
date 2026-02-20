@@ -1,5 +1,4 @@
-import React from "react";
-import Nav from "@/app/components/nav";
+import AdminNav from "@/app/components/adminnav";
 
 export default function AdminLayout({
     children,
@@ -8,11 +7,10 @@ export default function AdminLayout({
 }>) {
     return (
         <div className="min-h-screen relative flex flex-col">
-            {/* Navbar wrapper: height h-20 matches standard nav height, relative so Nav absolute stays inside */}
-            <header className="bg-[#2D3436] h-20 relative z-50">
-                <Nav />
+            <header className="fixed top-0 left-0 w-full z-50">
+                <AdminNav />
             </header>
-            <main className="flex-1">
+            <main className="flex-1 mt-16">
                 {children}
             </main>
         </div>

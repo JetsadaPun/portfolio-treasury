@@ -20,6 +20,7 @@ const Page = () => {
     projectName: string;
     projectDetails: string;
     projectImage: File | null;
+    projectFiles: File[];
     projectLink: string;
     projectDocument: File | null;
     members: string[];
@@ -27,6 +28,7 @@ const Page = () => {
     projectName: "",
     projectDetails: "",
     projectImage: null,
+    projectFiles: [],
     projectLink: "",
     projectDocument: null,
     members: ["You"],
@@ -108,6 +110,29 @@ const Page = () => {
     }
   };
 
+  const handleMultipleFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      const validImages = filesArray.filter(file => file.type.startsWith("image/"));
+
+      if (validImages.length < filesArray.length) {
+        Swal.fire("ไฟล์ไม่ถูกต้อง", "บางไฟล์ไม่ใช่รูปภาพและจะไม่ถูกเพิ่ม", "warning");
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        projectFiles: [...prev.projectFiles, ...validImages]
+      }));
+    }
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      projectFiles: prev.projectFiles.filter((_, i) => i !== index)
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -165,24 +190,39 @@ const Page = () => {
         throw new Error("Invalid data format received from server");
       }
 
-      // 4. Send Post Request
-      const postData = {
+      // 4. Send Post Request using FormData
+      const postRequestData = {
         subjectId: subjectId,
         projectName: formData.projectName,
         projectDetail: formData.projectDetails,
-        projectImage: "", // Backend currently expects String for URL
         projectLink: formData.projectLink,
-        projectDocs: "",  // Backend currently expects String for URL
+        projectDocs: "",
         userId: userId
       };
+
+      const submitData = new FormData();
+      // Append the JSON data as a Blob with application/json type
+      submitData.append("data", new Blob([JSON.stringify(postRequestData)], {
+        type: "application/json"
+      }));
+
+      // Append all images
+      formData.projectFiles.forEach((file) => {
+        submitData.append("images", file);
+      });
+
+      // Append document if exists
+      if (formData.projectDocument) {
+        submitData.append("document", formData.projectDocument);
+      }
 
       const response = await fetch(`${API_BASE}/api/posts`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
+          // Note: Browser will automatically set Content-Type to multipart/form-data with boundary
         },
-        body: JSON.stringify(postData)
+        body: submitData
       });
 
       if (!response.ok) {
@@ -264,15 +304,48 @@ const Page = () => {
           </div>
 
           <div className="mb-6">
-            <label className="block text-base font-medium text-black">เพิ่มรูปภาพโปรเจกต์ (URL หรือจะอัปโหลดภายหลัง)</label>
-            <input
-              ref={projectImageRef}
-              type="file"
-              name="projectImage"
-              onChange={handleFileChange}
-              className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-md file:bg-gray-50 hover:file:bg-gray-100"
-              accept="image/*"
-            />
+            <label className="block text-base font-medium text-black mb-2">
+              เพิ่มรูปภาพโปรเจกต์ (PNG, JPEG, JPG)
+            </label>
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <input
+                  type="file"
+                  multiple
+                  accept="image/png, image/jpeg, image/jpg"
+                  onChange={handleMultipleFilesChange}
+                  className="hidden"
+                  id="multi-image-upload"
+                />
+                <label
+                  htmlFor="multi-image-upload"
+                  className="cursor-pointer px-6 py-2.5 bg-indigo-50 text-indigo-600 rounded-xl border-2 border-dashed border-indigo-200 hover:bg-indigo-100 transition-all font-medium text-sm flex items-center gap-2"
+                >
+                  📷 เลือกรูปภาพเพิ่ม
+                </label>
+              </div>
+
+              {formData.projectFiles.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                  {formData.projectFiles.map((file, index) => (
+                    <div key={index} className="relative group rounded-xl overflow-hidden border border-gray-100 shadow-sm bg-gray-50 aspect-video flex items-center justify-center">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`Preview ${index}`}
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveFile(index)}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="mb-6">

@@ -90,7 +90,7 @@ const ProfilePage = () => {
               <div className="flex flex-col md:flex-row items-center md:items-end gap-6 mb-8">
                 <div className="relative">
                   <img
-                    src={user.profileImage || "/catprofile.jpg"}
+                    src={user.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`}
                     alt="profile"
                     className="w-40 h-40 rounded-full object-cover border-8 border-white shadow-lg bg-white"
                   />
@@ -126,8 +126,8 @@ const ProfilePage = () => {
               <div className="flex gap-10 border-b border-gray-100 mb-8 relative">
                 <div
                   className={`flex items-center gap-2 pb-4 cursor-pointer transition-all relative z-10 ${selectedTab === "project"
-                      ? "text-blue-600 font-bold border-b-2 border-blue-600"
-                      : "text-gray-400 font-medium hover:text-gray-600"
+                    ? "text-blue-600 font-bold border-b-2 border-blue-600"
+                    : "text-gray-400 font-medium hover:text-gray-600"
                     }`}
                   onClick={() => setSelectedTab("project")}
                 >
@@ -137,8 +137,8 @@ const ProfilePage = () => {
 
                 <div
                   className={`flex items-center gap-2 pb-4 cursor-pointer transition-all relative z-10 ${selectedTab === "aboutme"
-                      ? "text-blue-600 font-bold border-b-2 border-blue-600"
-                      : "text-gray-400 font-medium hover:text-gray-600"
+                    ? "text-blue-600 font-bold border-b-2 border-blue-600"
+                    : "text-gray-400 font-medium hover:text-gray-600"
                     }`}
                   onClick={() => setSelectedTab("aboutme")}
                 >

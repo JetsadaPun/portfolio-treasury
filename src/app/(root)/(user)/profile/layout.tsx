@@ -1,6 +1,4 @@
-import React from "react";
-
-import Nav from "@/app/components/nav";
+import UserNav from "@/app/components/usernav";
 
 export default function RootLayout({
   children,
@@ -9,8 +7,8 @@ export default function RootLayout({
 }>) {
   return (
     <div className="bg-gradient-to-b from-[#4D7CBF] to-[#AFBDD0] min-h-screen text-white relative">
-      <div><Nav/></div>
-      <main className="py-16">{children}</main>
+      <div><UserNav /></div>
+      <main className="pt-24">{children}</main>
     </div>
   );
 }

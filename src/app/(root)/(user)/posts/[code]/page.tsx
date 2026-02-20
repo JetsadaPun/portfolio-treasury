@@ -112,10 +112,6 @@ const Page = () => {
                 <DescriptionIcon className="text-[#0984E3] text-xl" />
                 <span className="text-sm font-semibold">ผลงาน: {reviews.length}</span>
               </div>
-              <div className="flex items-center gap-2 text-gray-600 bg-purple-50/50 border border-purple-100 px-4 py-2 rounded-2xl">
-                <GroupsIcon className="text-[#6C5CE7] text-xl" />
-                <span className="text-sm font-semibold">ผู้เข้าชม: 0</span>
-              </div>
               <div className="flex items-center gap-2 text-gray-600 bg-red-50/50 border border-red-100 px-4 py-2 rounded-2xl">
                 <ThumbUpIcon className="text-[#FF7675] text-xl" />
                 <span className="text-sm font-semibold">ความชอบ: 0</span>
@@ -138,17 +134,16 @@ const Page = () => {
               <Reviewsubject
                 key={post.postId}
                 username={post.userName || "ไม่ระบุชื่อ"}
-                date={new Date(post.createdAt).toLocaleDateString("th-TH", {
+                date={post.createdAt ? new Date(post.createdAt).toLocaleDateString("th-TH", {
                   year: "numeric",
                   month: "short",
                   day: "numeric",
-                })}
+                }) : "ไม่ระบุวันที่"}
                 projectName={post.projectName}
                 detail={post.projectDetail}
                 image={post.projectImage || "/img2.png"}
                 likeCount={0}
                 comment={0}
-                views={0}
                 postId={post.postId}
               />
             ))

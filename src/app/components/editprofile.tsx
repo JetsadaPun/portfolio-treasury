@@ -101,7 +101,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onUpdateSuccess, onCanc
             <div className="flex flex-col items-center gap-4">
               <div className="relative w-40 h-40 group">
                 <img
-                  src={formData.profileImage || "/catprofile.jpg"}
+                  src={formData.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}&background=random`}
                   alt="Profile"
                   className="w-full h-full object-cover rounded-full border-4 border-gray-50 shadow-md transition-all group-hover:brightness-75"
                 />

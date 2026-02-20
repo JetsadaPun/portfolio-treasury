@@ -12,11 +12,17 @@ const kanit = Kanit({
 });
 
 const Page2 = () => {
+  // State variables
   const [selectedButtons, setSelectedButtons] = useState<string[]>([]);
   const [subjects, setSubjects] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const itemsPerPage = 10;
 
   const buttonData = [
     "วิชาเฉพาะบังคับ",
@@ -24,22 +30,42 @@ const Page2 = () => {
     "วิชาที่ฉันรีวิวก่อนหน้านี้",
   ];
 
+  // Initial load
   useEffect(() => {
-    fetchSubjects();
+    fetchSubjects(currentPage, itemsPerPage, debouncedSearchTerm);
   }, []);
 
-  const fetchSubjects = async () => {
+  // Fetch when search term changes (reset to page 1)
+  useEffect(() => {
+    setCurrentPage(1);
+    fetchSubjects(1, itemsPerPage, debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
+
+  const fetchSubjects = async (page: number, size: number, search: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:8080/api/subjects");
+      // Backend expects 0-indexed page
+      const pageIndex = page - 1;
+      const url = `http://localhost:8080/api/subjects?page=${pageIndex}&size=${size}&search=${encodeURIComponent(search || "")}`;
+
+      const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
-        setSubjects(data);
+        if (data.content && Array.isArray(data.content)) {
+          setSubjects(data.content);
+          setTotalPages(data.totalPages);
+        } else {
+          // Fallback if API structure is different or no pagination
+          setSubjects(Array.isArray(data) ? data : []);
+          setTotalPages(1);
+        }
       } else {
         console.error("Failed to fetch subjects");
+        setSubjects([]);
       }
     } catch (error) {
       console.error("Error fetching subjects:", error);
+      setSubjects([]);
     } finally {
       setIsLoading(false);
     }
@@ -58,17 +84,16 @@ const Page2 = () => {
     setSelectedButtons((prev) => prev.filter((item) => item !== button));
   };
 
-  const filteredSubjects = subjects.filter((s) => {
-    const search = debouncedSearchTerm.toLowerCase();
-    return (
-      s.subjectNameId.toLowerCase().includes(search) ||
-      s.subjectNameTh.toLowerCase().includes(search) ||
-      s.subjectNameEn.toLowerCase().includes(search)
-    );
-  });
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      fetchSubjects(newPage, itemsPerPage, debouncedSearchTerm);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   return (
-    <div className={`${kanit.className} min-h-screen`}>
+    <div className={`${kanit.className} min-h-screen pb-12`}>
       <div className="mx-24 my-16">
         <div>
           <div className="max-w-m w-full">
@@ -96,16 +121,49 @@ const Page2 = () => {
           <div className="flex flex-col gap-4 mt-8">
             {isLoading ? (
               <div className="text-center py-10 text-white">กำลังโหลดวิชา...</div>
-            ) : filteredSubjects.length > 0 ? (
-              filteredSubjects.map((subject) => (
-                <Showsubject
-                  key={subject.subjectId}
-                  code={subject.subjectNameId}
-                  title={subject.subjectNameTh}
-                  subtitle={subject.subjectNameEn}
-                  workCount={0} // Default to 0 as work count is not yet in DB
-                />
-              ))
+            ) : subjects.length > 0 ? (
+              <>
+                {subjects.map((subject) => (
+                  <Showsubject
+                    key={subject.subjectId}
+                    code={subject.subjectNameId}
+                    title={subject.subjectNameTh}
+                    subtitle={subject.subjectNameEn}
+                    workCount={0} // Default to 0 as work count is not yet in DB
+                  />
+                ))}
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center gap-4 mt-8 bg-white/10 backdrop-blur-md p-4 rounded-full w-fit mx-auto border border-white/20 shadow-lg">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className={`px-4 py-2 rounded-full font-medium transition-all ${currentPage === 1
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-white hover:bg-white/20 active:scale-95"
+                        }`}
+                    >
+                      &lt; ก่อนหน้า
+                    </button>
+
+                    <span className="text-white font-medium px-4">
+                      หน้าที่ {currentPage} จาก {totalPages}
+                    </span>
+
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className={`px-4 py-2 rounded-full font-medium transition-all ${currentPage === totalPages
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-white hover:bg-white/20 active:scale-95"
+                        }`}
+                    >
+                      ถัดไป &gt;
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="text-center py-10 text-white opacity-60">
                 {searchTerm ? `ไม่พบวิชาที่ค้นหา: "${searchTerm}"` : "ไม่พบรายวิชาในระบบ"}

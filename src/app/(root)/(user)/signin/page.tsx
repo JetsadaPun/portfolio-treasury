@@ -6,6 +6,7 @@ import { Kanit } from 'next/font/google';
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { useRouter, usePathname } from "next/navigation";
+import Swal from "sweetalert2";
 
 const arimo = Arimo({
   subsets: ['latin'],
@@ -83,7 +84,7 @@ const page = () => {
       const result = await res.json();
 
       if (!res.ok || result.success === false) {
-        alert(result.error || "สมัครไม่สำเร็จ");
+        Swal.fire("ผิดพลาด", result.error || "สมัครไม่สำเร็จ", "error");
         return;
       }
 
@@ -91,11 +92,11 @@ const page = () => {
       setPendingEmail(formData.email.trim().toLowerCase());
       setPhase("verify");
       setVerifyCode("");
-      alert("ส่งโค้ดยืนยันไปที่อีเมลแล้ว กรุณากรอกรหัสเพื่อยืนยันบัญชี");
+      Swal.fire("สำเร็จ", "ส่งโค้ดยืนยันไปที่อีเมลแล้ว กรุณากรอกรหัสเพื่อยืนยันบัญชี", "success");
 
     } catch (err) {
       console.error(err);
-      alert("เกิดข้อผิดพลาดในระบบ");
+      Swal.fire("ผิดพลาด", "เกิดข้อผิดพลาดในระบบ", "error");
     } finally {
       setSending(false);
     }
@@ -118,16 +119,16 @@ const page = () => {
       const result = await res.json();
 
       if (!res.ok || result.success === false) {
-        alert(result.error || "ยืนยันไม่สำเร็จ");
+        Swal.fire("ผิดพลาด", result.error || "ยืนยันไม่สำเร็จ", "error");
         return;
       }
 
-      alert("ยืนยันบัญชีสำเร็จ! สามารถเข้าสู่ระบบได้แล้ว");
+      Swal.fire("สำเร็จ", "ยืนยันบัญชีสำเร็จ! สามารถเข้าสู่ระบบได้แล้ว", "success");
       router.push("/login");
 
     } catch (err) {
       console.error(err);
-      alert("เกิดข้อผิดพลาดในระบบ");
+      Swal.fire("ผิดพลาด", "เกิดข้อผิดพลาดในระบบ", "error");
     } finally {
       setSending(false);
     }

@@ -1,10 +1,9 @@
-"use client";  
+"use client";
 
 import React from "react";
 import { Kanit } from "next/font/google";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import GroupsIcon from "@mui/icons-material/Groups";
 import ShareIcon from "@mui/icons-material/Share";
 import Comment from "../../../../components/comment"
 
@@ -15,6 +14,39 @@ const kanit = Kanit({
 
 const Page = () => {
   const router = useRouter();
+  const params = useParams();
+  const id = params.id;
+  const postId = Number(id);
+
+  const [project, setProject] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  const API_BASE = "http://localhost:8080";
+
+  React.useEffect(() => {
+    if (id) {
+      fetchProject();
+    }
+  }, [id]);
+
+  const fetchProject = async () => {
+    setLoading(true);
+    try {
+      // We need an endpoint to get a single post by ID. 
+      // Checking if one exists or if we need to create it.
+      // Based on previous knowledge, maybe /api/posts/{id}? 
+      // Let's assume it exists or I'll add it if not.
+      const res = await fetch(`${API_BASE}/api/posts/${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setProject(data);
+      }
+    } catch (err) {
+      console.error("Error fetching project:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // ประกาศตัวแปรข้อความที่ใช้ในหน้าต่างๆ
   const labels = {
@@ -26,7 +58,6 @@ const Page = () => {
     github: "GitHub",
     projectMembers: "สมาชิกโปรเจกต์",
     likes: "ความชอบ",
-    views: "จำนวนผู้เข้าชม",
   };
 
   const subjects = [
@@ -84,7 +115,7 @@ const Page = () => {
     router.back();
   };
 
-  
+
 
   return (
     <div className={`${kanit.className} min-h-screen`}>
@@ -101,130 +132,125 @@ const Page = () => {
           ))}
         </div>
 
-        {/* รีวิว */}
-        <div className="flex flex-col gap-y-4">
-          {reviewsubject.map((review, index) => (
-            <div key={index} className="relative w-full p-4">
+        {/* รีวิว (Dynamic) */}
+        {!loading && project && (
+          <div className="flex flex-col gap-y-4">
+            <div className="relative w-full p-4">
               <div className="flex items-center mb-2">
-                <p className="text-base font-medium text-black mr-2">
-                  {review.username}
+                <p
+                  className="text-base font-medium text-black mr-2 cursor-pointer hover:text-blue-600 transition-colors"
+                  onClick={() => router.push(`/people/${project.studentId || project.userId}`)}
+                >
+                  {project.userName || "ไม่ระบุชื่อ"}
                 </p>
-                <p className="text-base text-gray-500">{review.date}</p>
+                <p className="text-base text-gray-500">
+                  {new Date(project.createdAt).toLocaleDateString("th-TH")}
+                </p>
               </div>
-              <p className="text-base font-medium text-black inline">
-                {labels.projectName}:{" "}
-              </p>
-              <span className="text-base text-black"> {review.projectName}</span>
+            </div>
 
+            <p className="text-base font-medium text-black inline pl-4">
+              {labels.projectName}:{" "}
+              <span className="font-normal"> {project.projectName}</span>
+            </p>
+
+            <div className="px-4">
               <p className="text-base font-medium text-black mt-2">
                 {labels.projectDetail}
               </p>
-              <span className="m-10 text-base text-black">{review.detail}</span>
-
-              <div className="flex justify-center items-center mt-4">
-                <div className="relative">
-                  <img
-                    src={review.image || "/placeholder.png"} // Fallback image
-                    alt="Project"
-                    style={{
-                      maxWidth: "400px",
-                      minWidth: "200px",
-                      maxHeight: "400px",
-                      minHeight: "200px",
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* เอกสารเกี่ยวกับโปรเจกต์ */}
-              {review.showDocuments && review.documents.length > 0 && (
-                <div className="mt-4 flex gap-2">
-                  <p className="text-base font-medium text-black">
-                    {labels.documents}:
-                  </p>
-                  <div className="flex flex-col gap-2">
-                    {review.documents.map((doc, index) => (
-                      <a
-                        key={index}
-                        href={doc.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-black"
-                      >
-                        {doc.name}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* GitHub */}
-              {review.showGithub && review.github && (
-                <div className="mt-4 flex gap-2">
-                  <p className="text-base font-medium text-black">{labels.github}:</p>
-                  <a
-                    href={review.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-black"
-                  >
-                    {review.github}
-                  </a>
-                </div>
-              )}
-
-              {/* สมาชิกโปรเจกต์ */}
-              {review.showMemberTags && review.membertag.length > 0 && (
-                <div className="mt-4">
-                  <p className="text-base font-medium text-black">
-                    {labels.projectMembers}:
-                  </p>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {review.membertag.map((member, index) => (
-                      <span
-                        key={index}
-                        className="bg-gray-200 text-gray-600 text-sm py-1 px-3 rounded-full"
-                      >
-                        #{member}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="flex items-center mt-4 text-gray-500 gap-x-8 justify-between">
-                <div className="flex gap-4">
-                  <div>
-                    <ThumbUpIcon /> {labels.likes}: {review.likeCount}
-                  </div>
-                  <div>
-                    <GroupsIcon /> {labels.views}: {review.views}
-                  </div>
-                </div>
-                <ShareIcon />
+              <div className="mt-2 text-base text-black bg-gray-50 p-6 rounded-2xl border border-gray-100 italic shadow-inner">
+                "{project.projectDetail}"
               </div>
             </div>
-          ))}
-        </div>
+
+            {/* แสดงรูปภาพทั้งหมด */}
+            <div className="mt-8 space-y-6 px-4">
+              {project.projectImages && project.projectImages.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {project.projectImages.map((imgUrl: string, idx: number) => (
+                    <div key={idx} className="relative group overflow-hidden rounded-3xl shadow-xl border border-gray-100 transition-all hover:shadow-2xl hover:border-blue-200">
+                      <img
+                        src={imgUrl}
+                        alt={`Project Image ${idx + 1}`}
+                        className="w-full h-72 object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex justify-center items-center">
+                  <div className="relative group">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                    <img
+                      src={project.projectImage || "/placeholder.png"}
+                      alt="Project"
+                      className="relative rounded-2xl shadow-xl transition-transform duration-500 group-hover:scale-[1.02]"
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "500px",
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* เอกสารเกี่ยวกับโปรเจกต์ */}
+            {project.projectDocs && (
+              <div className="mt-8 mx-4 p-4 bg-blue-50/30 rounded-2xl border border-blue-50 flex items-center gap-4">
+                <p className="text-base font-medium text-black">
+                  {labels.documents}:
+                </p>
+                <a
+                  href={project.projectDocs}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline flex items-center gap-1"
+                >
+                  🖇️ ดูเอกสารแนบ
+                </a>
+              </div>
+            )}
+
+            {/* ลิงก์งาน */}
+            {project.projectLink && (
+              <div className="mt-4 mx-4 p-4 bg-purple-50/30 rounded-2xl border border-purple-50 flex items-center gap-4">
+                <p className="text-base font-medium text-black inline">ลิงก์ผลงาน:</p>
+                <a
+                  href={project.projectLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-purple-600 hover:underline"
+                >
+                  🔗 {project.projectLink}
+                </a>
+              </div>
+            )}
+
+            <div className="flex items-center mt-8 mx-4 text-gray-500 gap-x-8 justify-between border-b pb-6 mb-2">
+              <div className="flex gap-8">
+              </div>
+              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
+                <ShareIcon />
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* แสดงคอมเมนต์ */}
-        <div className="mx-4 flex flex-col gap-y-4">
-          {/* ส่ง comment ให้กับ Comment component */}
-          <Comment cards={comment} />
+        <div className="mx-4 mt-8 flex flex-col gap-y-4">
+          <Comment postId={postId} />
         </div>
 
-        {/* ปุ่มย้อนกลับ & สร้างรีวิว */}
-        <div className="flex justify-between">
+        {/* ปุ่มย้อนกลับ */}
+        <div className="flex justify-between mt-8">
           <button
             onClick={handleBack}
-            className="text-black bg-[#AAD7BF] py-2 px-4 rounded-[15px] m-6">
+            className="text-black bg-[#AAD7BF] py-2 px-4 rounded-[15px] ml-4 mb-4 hover:bg-[#8ec4a7] transition-colors"
+          >
             {labels.backButton}
           </button>
-          {/* <button
-            
-            className="text-black bg-[#FDE69E] py-2 px-4 rounded-[15px] m-6">
-            {labels.createButton}
-          </button> */}
         </div>
       </div>
     </div>

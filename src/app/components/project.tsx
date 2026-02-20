@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 interface ProjectProps {
   userId?: string;
@@ -9,6 +9,7 @@ interface ProjectProps {
 const API_BASE = "http://localhost:8080";
 
 const Project: React.FC<ProjectProps> = ({ userId }) => {
+  const router = useRouter();
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -48,7 +49,11 @@ const Project: React.FC<ProjectProps> = ({ userId }) => {
   return (
     <div className="flex flex-col gap-6 w-full">
       {posts.map((post) => (
-        <div key={post.postId} className="border border-gray-200 w-full rounded-2xl p-6 shadow-sm bg-white hover:shadow-md transition-shadow">
+        <div
+          key={post.postId}
+          onClick={() => router.push(`/projects/${post.postId}`)}
+          className="border border-gray-200 w-full rounded-2xl p-6 shadow-sm bg-white hover:shadow-md transition-all cursor-pointer active:scale-[0.99]"
+        >
           <div className="text-gray-900 mb-4 border-b border-gray-50 pb-3 flex justify-between items-center">
             <div>
               <span className="font-bold mr-2 text-gray-700">ชื่อโปรเจกต์:</span>

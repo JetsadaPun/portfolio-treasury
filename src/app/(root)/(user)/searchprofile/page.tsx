@@ -21,12 +21,21 @@ const SearchProfilePage = () => {
 
   const handleSearch = async (query: string) => {
     setIsLoading(true);
+    const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`${API_BASE}/api/users/search?query=${encodeURIComponent(query)}`);
-      if (response.ok) {
+      const response = await fetch(`${API_BASE}/api/users/search?query=${encodeURIComponent(query)}`, {
+        headers: {
+          "Authorization": token ? `Bearer ${token}` : ""
+        }
+      });
+
+      const contentType = response.headers.get("content-type");
+      if (response.ok && contentType && contentType.includes("application/json")) {
         const data = await response.json();
         setProfiles(data);
       } else {
+        const text = await response.text();
+        console.error("Search API returned non-JSON or error:", response.status, text.substring(0, 100));
         setProfiles([]);
       }
     } catch (error) {
