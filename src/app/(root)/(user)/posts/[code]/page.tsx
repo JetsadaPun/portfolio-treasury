@@ -114,7 +114,7 @@ const Page = () => {
               </div>
               <div className="flex items-center gap-2 text-gray-600 bg-red-50/50 border border-red-100 px-4 py-2 rounded-2xl">
                 <ThumbUpIcon className="text-[#FF7675] text-xl" />
-                <span className="text-sm font-semibold">ความชอบ: 0</span>
+                <span className="text-sm font-semibold">ความชอบ: {reviews.reduce((acc, curr) => acc + (curr.likeCount || 0), 0)}</span>
               </div>
             </div>
           </div>
@@ -142,8 +142,8 @@ const Page = () => {
                 projectName={post.projectName}
                 detail={post.projectDetail}
                 image={post.projectImage || "/img2.png"}
-                likeCount={0}
-                comment={0}
+                likeCount={post.likeCount || 0}
+                comment={post.commentCount || 0}
                 postId={post.postId}
               />
             ))

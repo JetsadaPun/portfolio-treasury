@@ -129,7 +129,7 @@ const Page2 = () => {
                     code={subject.subjectNameId}
                     title={subject.subjectNameTh}
                     subtitle={subject.subjectNameEn}
-                    workCount={0} // Default to 0 as work count is not yet in DB
+                    workCount={subject.workCount || 0}
                   />
                 ))}
 
